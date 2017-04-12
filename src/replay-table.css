@@ -1,0 +1,41 @@
+h1 {
+	color: green;
+}
+
+.win {
+	background-color: #EDFFDF;
+}
+
+.draw {
+	background-color: #F3F3F3;
+}
+
+.loss {
+	background-color: #FFECEC;
+}
+
+.replayTable tbody {
+	position: relative;
+}
+
+.replayTable tbody tr {
+	position: absolute;
+}
+
+.replayTable > .controls > .play {
+	width: 10px;
+	height: 10px;
+	background-color: black;
+}
+
+.replayTable > .controls > .pause {
+	width: 10px;
+	height: 10px;
+	background-color: gray;
+}
+
+.replayTable > .controls > .replay {
+	width: 10px;
+	height: 10px;
+	background-color: blue;
+}
