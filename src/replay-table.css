@@ -39,3 +39,23 @@ h1 {
 	height: 10px;
 	background-color: blue;
 }
+
+.replayTable > .controls > .previous {
+	width: 10px;
+	height: 10px;
+	background-color: yellow;
+}
+
+.replayTable > .controls > .previous.disabled{
+	background-color: lightyellow;
+}
+
+.replayTable > .controls > .next {
+	width: 10px;
+	height: 10px;
+	background-color: green;
+}
+
+.replayTable > .controls > .next.disabled{
+	background-color: lightgreen;
+}

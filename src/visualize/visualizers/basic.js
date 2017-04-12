@@ -1,9 +1,11 @@
 import PlayButton from '../controls/play-button';
+import PreviousButton from '../controls/previous-button';
+import NextButton from '../controls/next-button';
 
 
 const rowHeight = 23;
 
-const animationDuration = {
+const durations = {
     highlight: 800,
     highlightToMove: 200,
     move: 1000,
@@ -16,10 +18,10 @@ export default class {
         this.data = data;
         this.params = params;
 
-        this.animationDuration = Object.keys(animationDuration).reduce((obj, key) =>
-            Object.assign(obj, { [key]: animationDuration[key]/params.speed }), {});
-        this.animationDuration.total = Object.keys(animationDuration).reduce((total, key) =>
-            total + this.animationDuration[key],0);
+        this.durations = Object.keys(durations).reduce((obj, key) =>
+            Object.assign(obj, { [key]: durations[key]/params.speed }), {});
+        this.durations.total = Object.keys(durations).reduce((total, key) =>
+            total + this.durations[key],0);
 
         this.currentRound = this.params.startFromRound === 'last' ? this.data.meta.lastRound : this.params.startFromRound;
 
@@ -32,9 +34,14 @@ export default class {
         const controls = d3.select(selector).append('div')
             .attr('class', 'controls');
 
+        const checkFirstRound = () => this.currentRound ===  0;
         const checkLastRound = () => this.currentRound ===  this.data.meta.lastRound;
-        const goToNextRound = () => checkLastRound() ? this.goToRound(0) : this.goToRound(this.currentRound + 1);
-        const playButton = new PlayButton(controls, this.animationDuration.total, checkLastRound, goToNextRound);
+
+        this.controls = {
+            play: new PlayButton(controls, this.durations.total, checkLastRound, this.first.bind(this), this.next.bind(this)),
+            previous: new PreviousButton(controls, checkFirstRound, this.previous.bind(this)),
+            next: new NextButton(controls, checkLastRound, this.next.bind(this))
+        };
     }
 
     renderTable (selector) {
@@ -63,11 +70,11 @@ export default class {
             .text(cell => cell);
     }
 
-    goToRound (roundNumber) {
+    to (roundNumber) {
         const rows = this.tbody.selectAll('tr')
             .data(this.data.results[roundNumber].results, k => k.item);
 
-        rows.transition().duration(this.animationDuration.highlight)
+        rows.transition().duration(this.durations.highlight)
             .style("background-color", d => {
                 switch(d.outcome) {
                     case 'win':
@@ -83,23 +90,50 @@ export default class {
 
 
         rows.transition()
-            .delay(this.animationDuration.highlight + this.animationDuration.highlightToMove)
-            .duration(this.animationDuration.move)
+            .delay(this.durations.highlight + this.durations.highlightToMove)
+            .duration(this.durations.move)
             .style('top', (d,i) => this.top + rowHeight + ((i*rowHeight)) + "px");
 
         rows.transition()
-            .delay(this.animationDuration.highlight + this.animationDuration.highlightToMove + this.animationDuration.move)
-            .duration(this.animationDuration.fade)
+            .delay(this.durations.highlight + this.durations.highlightToMove + this.durations.move)
+            .duration(this.durations.fade)
             .style("background-color", 'transparent');
 
         const cells = rows.selectAll('td')
             .data(result => [result.position.strict, result.item, result.total.total])
             .transition()
-            .delay(this.animationDuration.highlight + this.animationDuration.highlightToMove + this.animationDuration.move)
-            .duration(this.animationDuration.fade)
+            .delay(this.durations.highlight + this.durations.highlightToMove + this.durations.move)
+            .duration(this.durations.fade)
             .text(cell => cell);
 
         this.currentRound = roundNumber;
+        this.updateControls();
+    }
+
+    first () {
+        this.to(0);
+    }
+
+    last () {
+        this.to(this.data.meta.lastRound);
+    }
+
+    previous () {
+        if (this.currentRound > 0) {
+            this.to(this.currentRound - 1);
+        }
+    }
+
+    next () {
+        if (this.currentRound < this.data.meta.lastRound) {
+            this.to(this.currentRound + 1);
+        }
+    }
+
+    updateControls () {
+        for (let control in this.controls) {
+            this.controls[control].update()
+        }
     }
 
     drillDownToItem (item) {

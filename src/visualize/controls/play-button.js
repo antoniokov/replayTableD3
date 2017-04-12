@@ -1,15 +1,16 @@
 export default class {
-    constructor (selector, animationTime, checkLastRound, goToNextRound) {
+    constructor (selector, animationTime, checkLastRound, first, next) {
         this.animationTime = animationTime;
         this.checkLastRound = checkLastRound;
-        this.goToNextRound = goToNextRound;
+        this.first = first;
+        this.next = next;
 
         this.isPlaying = false;
         this.timer = null;
 
         this.play = this.play.bind(this);
         this.pause = this.pause.bind(this);
-        this.setClass = this.setClass.bind(this);
+        this.update = this.update.bind(this);
 
         this.button = selector.append('div')
             .on('click', () => {
@@ -20,19 +21,24 @@ export default class {
                 }
             });
 
-        this.setClass();
+        this.update();
     }
 
     play () {
         this.isPlaying = true;
-        this.setClass();
-        this.goToNextRound();
+        this.update();
+
+        if (this.checkLastRound()) {
+            this.first();
+        } else {
+            this.next();
+        }
 
         this.timer = setInterval(() => {
             if (this.checkLastRound()) {
                 this.pause();
             } else {
-                this.goToNextRound();
+                this.next();
             }
         }, this.animationTime);
 
@@ -41,10 +47,10 @@ export default class {
     pause () {
         clearInterval(this.timer);
         this.isPlaying = false;
-        this.setClass();
+        this.update();
     }
 
-    setClass () {
+    update () {
         const className = this.isPlaying
             ? 'pause'
             : this.checkLastRound() ? 'replay' : 'play';
