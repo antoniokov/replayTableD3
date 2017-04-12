@@ -25,6 +25,8 @@ export default class {
 
         this.currentRound = this.params.startFromRound === 'last' ? this.data.meta.lastRound : this.params.startFromRound;
 
+        this.dispatch = d3.dispatch('round-change');
+
         const selector = params.id ? `#${params.id}` : '.replayTable';
         this.renderControls(selector);
         this.renderTable(selector);
@@ -34,14 +36,18 @@ export default class {
         const controls = d3.select(selector).append('div')
             .attr('class', 'controls');
 
-        const checkFirstRound = () => this.currentRound ===  0;
-        const checkLastRound = () => this.currentRound ===  this.data.meta.lastRound;
+        const roundMeta = this.data.results[this.currentRound].meta;
 
         this.controls = {
-            play: new PlayButton(controls, this.durations.total, checkLastRound, this.first.bind(this), this.next.bind(this)),
-            previous: new PreviousButton(controls, checkFirstRound, this.previous.bind(this)),
-            next: new NextButton(controls, checkLastRound, this.next.bind(this))
+            play: new PlayButton(controls, roundMeta, this.first.bind(this), this.next.bind(this), this.durations.total),
+            previous: new PreviousButton(controls, roundMeta, this.previous.bind(this)),
+            next: new NextButton(controls, roundMeta, this.next.bind(this))
         };
+
+        Object.keys(this.controls).forEach(key => {
+            const control = this.controls[key];
+            this.dispatch.on(`round-change.${key}`, control.update.bind(control));
+        });
     }
 
     renderTable (selector) {
@@ -71,6 +77,8 @@ export default class {
     }
 
     to (roundNumber) {
+        this.dispatch.call("round-change", this, this.data.results[roundNumber].meta);
+
         const rows = this.tbody.selectAll('tr')
             .data(this.data.results[roundNumber].results, k => k.item);
 
@@ -107,7 +115,6 @@ export default class {
             .text(cell => cell);
 
         this.currentRound = roundNumber;
-        this.updateControls();
     }
 
     first () {
@@ -127,12 +134,6 @@ export default class {
     next () {
         if (this.currentRound < this.data.meta.lastRound) {
             this.to(this.currentRound + 1);
-        }
-    }
-
-    updateControls () {
-        for (let control in this.controls) {
-            this.controls[control].update()
         }
     }
 

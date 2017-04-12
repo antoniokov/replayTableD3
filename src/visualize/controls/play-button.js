@@ -1,9 +1,10 @@
 export default class {
-    constructor (selector, animationTime, checkLastRound, first, next) {
-        this.animationTime = animationTime;
-        this.checkLastRound = checkLastRound;
+    constructor (selector, roundMeta, first, next, animationTime) {
+        this.isLast = roundMeta.isLast;
+
         this.first = first;
         this.next = next;
+        this.animationTime = animationTime;
 
         this.isPlaying = false;
         this.timer = null;
@@ -12,31 +13,35 @@ export default class {
         this.pause = this.pause.bind(this);
         this.update = this.update.bind(this);
 
+        this.dispatch = d3.dispatch('play', 'pause');
+        this.dispatch.on('play.button', this.play);
+        this.dispatch.on('pause.button', this.pause);
+
         this.button = selector.append('div')
             .on('click', () => {
                 if (this.isPlaying) {
-                    this.pause();
+                    this.dispatch.call('pause');
                 } else {
-                    this.play();
+                    this.dispatch.call('play');
                 }
             });
 
-        this.update();
+        this.setClass(this.isLast ? 'replay' : 'play');
     }
 
     play () {
         this.isPlaying = true;
-        this.update();
+        this.setClass('pause');
 
-        if (this.checkLastRound()) {
+        if (this.isLast) {
             this.first();
         } else {
             this.next();
         }
 
         this.timer = setInterval(() => {
-            if (this.checkLastRound()) {
-                this.pause();
+            if (this.isLast) {
+                this.dispatch.call('pause');
             } else {
                 this.next();
             }
@@ -47,17 +52,17 @@ export default class {
     pause () {
         clearInterval(this.timer);
         this.isPlaying = false;
-        this.update();
+        this.setClass(this.isLast ? 'replay' : 'play');
     }
 
-    update () {
-        const className = this.isPlaying
-            ? 'pause'
-            : this.checkLastRound() ? 'replay' : 'play';
-
+    setClass (className) {
         this.button
             .classed('play', className === 'play')
             .classed('pause', className === 'pause')
             .classed('replay', className === 'replay');
+    }
+
+    update (roundMeta) {
+        this.isLast = roundMeta.isLast;
     }
 };

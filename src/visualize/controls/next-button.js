@@ -1,14 +1,12 @@
 export default class {
-    constructor (selector, checkLastRound, next) {
-        this.checkLastRound = checkLastRound;
-
+    constructor (selector, roundMeta, next) {
         this.button = selector.append('div')
             .attr('class', 'next')
-            .classed('disabled', checkLastRound())
+            .classed('disabled', roundMeta.isLast)
             .on('click', next);
     }
 
-    update () {
-        this.button.classed('disabled', this.checkLastRound());
+    update (roundMeta) {
+        this.button.classed('disabled', roundMeta.isLast);
     }
 };
