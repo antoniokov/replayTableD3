@@ -2,8 +2,11 @@ import PlayButton from '../controls/play-button';
 import PreviousButton from '../controls/previous-button';
 import NextButton from '../controls/next-button';
 
+import toCamelCase from '../../helpers/general/to-camel-case';
+
 
 const rowHeight = 23;
+const dispatchers = ['roundChange', 'play', 'pause'];
 
 const durations = {
     highlight: 800,
@@ -25,7 +28,7 @@ export default class {
 
         this.currentRound = this.params.startFromRound === 'last' ? this.data.meta.lastRound : this.params.startFromRound;
 
-        this.dispatch = d3.dispatch('round-change');
+        this.dispatch = d3.dispatch(...dispatchers);
 
         const selector = params.id ? `#${params.id}` : '.replayTable';
         this.renderControls(selector);
@@ -39,14 +42,19 @@ export default class {
         const roundMeta = this.data.results[this.currentRound].meta;
 
         this.controls = {
-            play: new PlayButton(controls, roundMeta, this.first.bind(this), this.next.bind(this), this.durations.total),
+            play: new PlayButton(controls, roundMeta, this.play.bind(this), this.pause.bind(this)),
             previous: new PreviousButton(controls, roundMeta, this.previous.bind(this)),
             next: new NextButton(controls, roundMeta, this.next.bind(this))
         };
 
-        Object.keys(this.controls).forEach(key => {
-            const control = this.controls[key];
-            this.dispatch.on(`round-change.${key}`, control.update.bind(control));
+        Object.keys(this.controls).forEach(ctrl => {
+            const control = this.controls[ctrl];
+            dispatchers.forEach(dispatcher => {
+                const method = toCamelCase(`on-${dispatcher}`);
+                if (control[method]) {
+                    this.dispatch.on(`${dispatcher}.${ctrl}`, control[method].bind(control));
+                }
+            });
         });
     }
 
@@ -77,7 +85,7 @@ export default class {
     }
 
     to (roundNumber) {
-        this.dispatch.call("round-change", this, this.data.results[roundNumber].meta);
+        this.dispatch.call('roundChange', this, this.data.results[roundNumber].meta);
 
         const rows = this.tbody.selectAll('tr')
             .data(this.data.results[roundNumber].results, k => k.item);
@@ -135,6 +143,30 @@ export default class {
         if (this.currentRound < this.data.meta.lastRound) {
             this.to(this.currentRound + 1);
         }
+    }
+
+    play (stopAt = this.data.meta.lastRound) {
+        this.dispatch.call('play');
+
+        if (this.currentRound === this.data.meta.lastRound) {
+            this.first();
+        } else {
+            this.next();
+        }
+
+        this.timer = setInterval(() => {
+            if (this.currentRound === stopAt) {
+                this.dispatch.call('pause');
+            } else {
+                this.next();
+            }
+        }, this.durations.total);
+
+    }
+
+    pause () {
+        this.dispatch.call('pause');
+        clearInterval(this.timer);
     }
 
     drillDownToItem (item) {

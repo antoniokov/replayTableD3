@@ -4,9 +4,11 @@ export default class {
             .attr('class', 'previous')
             .classed('disabled', roundMeta.index === 0)
             .on('click', previous);
+
+        this.onRoundChange = this.onRoundChange.bind(this);
     }
 
-    update (roundMeta) {
+    onRoundChange (roundMeta) {
         this.button.classed('disabled', roundMeta.index === 0);
     }
 };

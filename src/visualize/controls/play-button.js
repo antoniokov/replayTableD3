@@ -1,68 +1,46 @@
 export default class {
-    constructor (selector, roundMeta, first, next, animationTime) {
+    constructor (selector, roundMeta, play, pause) {
         this.isLast = roundMeta.isLast;
-
-        this.first = first;
-        this.next = next;
-        this.animationTime = animationTime;
-
-        this.isPlaying = false;
-        this.timer = null;
-
-        this.play = this.play.bind(this);
-        this.pause = this.pause.bind(this);
-        this.update = this.update.bind(this);
-
-        this.dispatch = d3.dispatch('play', 'pause');
-        this.dispatch.on('play.button', this.play);
-        this.dispatch.on('pause.button', this.pause);
 
         this.button = selector.append('div')
             .on('click', () => {
                 if (this.isPlaying) {
-                    this.dispatch.call('pause');
+                    pause();
                 } else {
-                    this.dispatch.call('play');
+                    play();
                 }
             });
 
-        this.setClass(this.isLast ? 'replay' : 'play');
+        this.updateClass();
+
+        this.onPlay = this.onPlay.bind(this);
+        this.onPause = this.onPause.bind(this);
+        this.onRoundChange = this.onRoundChange.bind(this);
     }
 
-    play () {
+    onPlay () {
         this.isPlaying = true;
-        this.setClass('pause');
-
-        if (this.isLast) {
-            this.first();
-        } else {
-            this.next();
-        }
-
-        this.timer = setInterval(() => {
-            if (this.isLast) {
-                this.dispatch.call('pause');
-            } else {
-                this.next();
-            }
-        }, this.animationTime);
-
+        this.updateClass();
     }
 
-    pause () {
-        clearInterval(this.timer);
+    onPause () {
         this.isPlaying = false;
-        this.setClass(this.isLast ? 'replay' : 'play');
+        this.updateClass();
     }
 
-    setClass (className) {
+    onRoundChange (roundMeta) {
+        this.isLast = roundMeta.isLast;
+        this.updateClass();
+    }
+
+    updateClass () {
+        const className = this.isPlaying
+            ? 'pause'
+            : this.isLast ? 'replay' : 'play';
+
         this.button
             .classed('play', className === 'play')
             .classed('pause', className === 'pause')
             .classed('replay', className === 'replay');
-    }
-
-    update (roundMeta) {
-        this.isLast = roundMeta.isLast;
     }
 };
