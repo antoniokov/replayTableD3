@@ -6,8 +6,8 @@ import warn from '../helpers/warn';
 
 const reservedKeywords = ['preset'];
 
-export default function (userConfig) {
-    const config = getPresetConfig(userConfig.preset) || getEmptyConfig();
+export default function (id, userConfig) {
+    const config = getPresetConfig(userConfig.preset) || getEmptyConfig(id);
 
     Object.keys(userConfig)
         .filter(param => !reservedKeywords.includes(param))
@@ -39,8 +39,8 @@ function getPresetConfig (userPreset) {
     return presets[userPreset];
 }
 
-function getEmptyConfig () {
-    return Object.keys(configs).reduce((obj, module) => Object.assign(obj, { [module]: {} }), {});
+function getEmptyConfig (id) {
+    return Object.keys(configs).reduce((obj, module) => Object.assign(obj, { [module]: { id: id } }), {});
 }
 
 function paramToModule (param) {

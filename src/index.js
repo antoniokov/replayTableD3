@@ -10,8 +10,7 @@ import crash from './helpers/crash';
 
 Array.from(document.getElementsByClassName('replayTable'))
     .forEach(table => {
-        const config = configure(table.dataset);
-        config.visualize.id = table.id;
+        const config = configure(table.id, table.dataset);
 
         Promise.resolve(extract(config.extract))
             .then(raw => {

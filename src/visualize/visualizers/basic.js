@@ -6,8 +6,7 @@ import toCamelCase from '../../helpers/general/to-camel-case';
 
 
 const rowHeight = 23;
-const dispatchers = ['roundChange', 'play', 'pause'];
-
+const dispatchers = ['roundChange', 'play', 'pause', 'roundPreview', 'endPreview'];
 const durations = {
     highlight: 800,
     highlightToMove: 200,
@@ -15,6 +14,7 @@ const durations = {
     moveToFade: 0,
     fade: 700
 };
+
 
 export default class {
     constructor (data, params) {
@@ -26,7 +26,7 @@ export default class {
         this.durations.total = Object.keys(durations).reduce((total, key) =>
             total + this.durations[key],0);
 
-        this.currentRound = this.params.startFromRound === 'last' ? this.data.meta.lastRound : this.params.startFromRound;
+        this.currentRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
 
         this.dispatch = d3.dispatch(...dispatchers);
 
@@ -73,12 +73,12 @@ export default class {
             .enter().append('th')
             .text(column => column);
 
-        const rows = this.tbody.selectAll('tr')
+        this.rows = this.tbody.selectAll('tr')
             .data(this.data.results[this.currentRound].results, k => k.item)
             .enter().append('tr')
             .style('top', (d,i) => this.top + rowHeight + ((i*rowHeight)) + "px");
 
-        const cells = rows.selectAll('td')
+        this.cells = this.rows.selectAll('td')
             .data(result => [result.position.strict, result.item, result.total.total])
             .enter().append('td')
             .text(cell => cell);
@@ -87,35 +87,23 @@ export default class {
     to (roundNumber) {
         this.dispatch.call('roundChange', this, this.data.results[roundNumber].meta);
 
-        const rows = this.tbody.selectAll('tr')
+        this.rows = this.rows
             .data(this.data.results[roundNumber].results, k => k.item);
 
-        rows.transition().duration(this.durations.highlight)
-            .style("background-color", d => {
-                switch(d.outcome) {
-                    case 'win':
-                        return '#EDFFDF';
-                    case 'draw':
-                        return '#F3F3F3';
-                    case 'loss':
-                        return '#FFECEC';
-                    default:
-                        return 'transparent';
-                }
-            });
+        this.rows.transition().duration(this.durations.highlight)
+            .style("background-color", d => this.params.colors[d.outcome] || 'transparent');
 
-
-        rows.transition()
+        this.rows.transition()
             .delay(this.durations.highlight + this.durations.highlightToMove)
             .duration(this.durations.move)
             .style('top', (d,i) => this.top + rowHeight + ((i*rowHeight)) + "px");
 
-        rows.transition()
+        this.rows.transition()
             .delay(this.durations.highlight + this.durations.highlightToMove + this.durations.move)
             .duration(this.durations.fade)
             .style("background-color", 'transparent');
 
-        const cells = rows.selectAll('td')
+        this.cells = this.rows.selectAll('td')
             .data(result => [result.position.strict, result.item, result.total.total])
             .transition()
             .delay(this.durations.highlight + this.durations.highlightToMove + this.durations.move)
@@ -123,6 +111,26 @@ export default class {
             .text(cell => cell);
 
         this.currentRound = roundNumber;
+    }
+
+    preview (roundNumber) {
+        if (roundNumber !== this.currentRound) {
+            this.dispatch.call('roundPreview', this, this.data.results[roundNumber].meta);
+        }
+
+        this.rows = this.rows
+            .data(this.data.results[roundNumber].results, k => k.item);
+
+        this.cells = this.rows.selectAll('td')
+            .data(result => [result.position.strict, result.item, result.total.total])
+            .transition()
+            .duration(this.durations.fade)
+            .text(cell => cell);
+    }
+
+    endPreview () {
+        this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
+        this.preview(this.currentRound);
     }
 
     first () {

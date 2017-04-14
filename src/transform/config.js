@@ -6,6 +6,12 @@ import parseObject from '../helpers/parsing/parse-object';
 
 
 export default {
+    id: {
+        default: '',
+        parse: input => input,
+        validate: isString
+    },
+
     transformer: {
         default: 'listOfMatches',
         parse: value => value,
