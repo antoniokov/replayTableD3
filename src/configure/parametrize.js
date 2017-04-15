@@ -12,7 +12,7 @@ export default function (config, userConfig) {
         .forEach(param => {
             if (config[param].validate(userConfig[param])) {
                 params[param] = userConfig[param];
-            } else {
+            } else if (userConfig[param] !== undefined) {
                 warn(`Sorry, we cannot accept ${userConfig[param]} as ${param}. \
                 Moving on with the default value, which is ${params[param]}.`);
             }

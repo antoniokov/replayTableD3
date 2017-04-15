@@ -1,7 +1,4 @@
-import PlayButton from '../controls/play-button';
-import PreviousButton from '../controls/previous-button';
-import NextButton from '../controls/next-button';
-
+import * as controls from '../controls';
 import toCamelCase from '../../helpers/general/to-camel-case';
 
 
@@ -36,15 +33,15 @@ export default class {
     }
 
     renderControls(selector) {
-        const controls = d3.select(selector).append('div')
+        const controlsSelector = d3.select(selector).append('div')
             .attr('class', 'controls');
 
         const roundMeta = this.data.results[this.currentRound].meta;
 
         this.controls = {
-            play: new PlayButton(controls, roundMeta, this.play.bind(this), this.pause.bind(this)),
-            previous: new PreviousButton(controls, roundMeta, this.previous.bind(this)),
-            next: new NextButton(controls, roundMeta, this.next.bind(this))
+            play: new controls.Play(controlsSelector, roundMeta, this.play.bind(this), this.pause.bind(this)),
+            previous: new controls.Previous(controlsSelector, roundMeta, this.previous.bind(this)),
+            next: new controls.Next(controlsSelector, roundMeta, this.next.bind(this))
         };
 
         Object.keys(this.controls).forEach(ctrl => {

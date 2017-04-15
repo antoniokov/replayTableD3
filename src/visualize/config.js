@@ -18,13 +18,13 @@ export default {
     },
 
     startFromRound: {
-        default: undefined,
+        default: null,
         parse: input => Number.parseInt(input, 10),
         validate: value => !value || !Number.isNaN(value)
     },
 
     roundsTotalNumber: {
-        default: undefined,
+        default: null,
         parse: input => Number.parseInt(input, 10) || undefined,
         validate: value => !value || !Number.isNaN(value)
     },

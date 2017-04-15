@@ -48,18 +48,4 @@ export default {
         parse: input => input,
         validate: isString
     },
-
-    //listOfMatches
-    locationFirst: {
-        default: 'home',
-        parse: input => input,
-        validate: value => ['home', 'away'].includes(value)
-    },
-
-    //pointsTable
-    extraColumnsNumber: {
-        default: 0,
-        parse: input => Number.parseInt(input, 10),
-        validate: value => !Number.isNaN(value)
-    }
 };
