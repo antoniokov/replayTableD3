@@ -2,7 +2,7 @@ import * as controls from '../controls';
 import toCamelCase from '../../helpers/general/to-camel-case';
 
 
-const rowHeight = 23;
+const rowHeight = 22;
 const dispatchers = ['roundChange', 'play', 'pause', 'roundPreview', 'endPreview'];
 const durations = {
     highlight: 800,
@@ -23,7 +23,8 @@ export default class {
         this.durations.total = Object.keys(durations).reduce((total, key) =>
             total + this.durations[key],0);
 
-        this.currentRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
+        this.initialRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
+        this.currentRound = this.initialRound;
 
         this.dispatch = d3.dispatch(...dispatchers);
 
@@ -72,8 +73,7 @@ export default class {
 
         this.rows = this.tbody.selectAll('tr')
             .data(this.data.results[this.currentRound].results, k => k.item)
-            .enter().append('tr')
-            .style('top', (d,i) => this.top + rowHeight + ((i*rowHeight)) + "px");
+            .enter().append('tr');
 
         this.cells = this.rows.selectAll('td')
             .data(result => [result.position.strict, result.item, result.total.total])
@@ -84,6 +84,13 @@ export default class {
     to (roundNumber) {
         this.dispatch.call('roundChange', this, this.data.results[roundNumber].meta);
 
+        const differences = this.data.results[roundNumber].results.map(result => {
+            const previous = this.data.results[this.initialRound].results
+                .filter(res => res.item === result.item)[0].position.strict;
+
+            return result.position.strict - previous;
+        });
+
         this.rows = this.rows
             .data(this.data.results[roundNumber].results, k => k.item);
 
@@ -93,7 +100,8 @@ export default class {
         this.rows.transition()
             .delay(this.durations.highlight + this.durations.highlightToMove)
             .duration(this.durations.move)
-            .style('top', (d,i) => this.top + rowHeight + ((i*rowHeight)) + "px");
+            .style('transform', (d,i) => `translateY(${differences[i]*rowHeight}px)`);
+
 
         this.rows.transition()
             .delay(this.durations.highlight + this.durations.highlightToMove + this.durations.move)
@@ -101,7 +109,9 @@ export default class {
             .style("background-color", 'transparent');
 
         this.cells = this.rows.selectAll('td')
-            .data(result => [result.position.strict, result.item, result.total.total])
+            .data(result => [result.position.strict, result.item, result.total.total]);
+
+        this.cells
             .transition()
             .delay(this.durations.highlight + this.durations.highlightToMove + this.durations.move)
             .duration(this.durations.fade)

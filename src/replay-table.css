@@ -14,14 +14,6 @@ h1 {
 	background-color: #FFECEC;
 }
 
-.replayTable tbody {
-	position: relative;
-}
-
-.replayTable tbody tr {
-	position: absolute;
-}
-
 .replayTable > .controls > .play {
 	width: 10px;
 	height: 10px;
