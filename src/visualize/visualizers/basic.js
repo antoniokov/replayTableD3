@@ -6,11 +6,12 @@ const columns = ['position', 'item', 'total'];
 const rowHeight = 22;
 const dispatchers = ['roundChange', 'play', 'pause', 'roundPreview', 'endPreview'];
 const durations = {
-    highlight: 800,
+    highlight: 500,
     highlightToMove: 200,
-    move: 1000,
+    move: 750,
     moveToFade: 0,
-    fade: 700
+    fade: 250,
+    freeze: 500,
 };
 
 
@@ -24,14 +25,14 @@ export default class {
         this.durations.total = Object.keys(durations).reduce((total, key) =>
             total + this.durations[key],0);
 
-        this.initialRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
-        this.currentRound = this.initialRound;
+        this.currentRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
+        this.isPlaying = false;
 
         this.dispatch = d3.dispatch(...dispatchers);
 
         this.selector = params.id ? `#${params.id}` : '.replayTable';
         this.renderControls();
-        this.renderTable();
+        [this.table, this.rows, this.cells] = this.renderTable(this.currentRound);
     }
 
     renderControls() {
@@ -57,42 +58,10 @@ export default class {
         });
     }
 
-    renderTable () {
-        const table = d3.select(this.selector).append('table');
-        this.thead = table.append('thead');
-        this.tbody = table.append('tbody');
-
-        this.header = this.thead.append('tr')
-            .selectAll('th')
-            .data(columns)
-            .enter().append('th')
-            .text(column => column);
-
-        this.rows = this.tbody.selectAll('tr')
-            .data(this.data.results[this.currentRound].results, k => k.item)
-            .enter().append('tr');
-
-        this.cells = this.rows.selectAll('td')
-            .data(result => [result.position.strict, result.item, result.total.total])
-            .enter().append('td')
-            .text(cell => cell);
-    }
-
-    to (roundNumber) {
-        this.dispatch.call('roundChange', this, this.data.results[roundNumber].meta);
-
-
-        /*
-        const differences = this.data.results[roundNumber].results.map(result => {
-            const previous = this.data.results[this.initialRound].results
-                .filter(res => res.item === result.item)[0].position.strict;
-
-            return result.position.strict - previous;
-        });
-        */
-
+    renderTable (roundNumber, isVisible = true) {
         const table = d3.select(this.selector).append('table')
-            .style('visibility', 'hidden');
+            .classed('hidden', !isVisible);
+
         const thead = table.append('thead');
         const tbody = table.append('tbody');
 
@@ -107,20 +76,36 @@ export default class {
             .enter().append('tr');
 
         const cells = rows.selectAll('td')
-            .data(result => [result.position.strict, result.item, result.total.total])
+            .data(result => [
+                Object.assign({}, result, { text: result.position.strict}),
+                Object.assign({}, result, { text: result.item}),
+                Object.assign({}, result, { text: result.total.total})
+            ])
             .enter().append('td')
-            .text(cell => cell);
+            .text(cell => cell.text);
 
-        const currentYs = new Map(this.rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
-        const nextYs = new Map(rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
+        return [table, rows, cells];
+    }
 
-        this.rows = this.rows
-            .data(this.data.results[roundNumber].results, k => k.item);
+    getItemsYs (rows) {
+        return new Map(rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
+    }
 
-        this.rows
+    to (roundIndex) {
+        this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
+
+        const [table, rows, cells] = this.renderTable(roundIndex, false);
+        const currentYs = this.getItemsYs(this.rows);
+        const nextYs = this.getItemsYs(rows);
+
+        const outcomes = new Map(this.data.results[roundIndex].results.map(result => [result.item, result.outcome]));
+
+        let transitionsFinished = 0;
+
+        this.cells
             .transition()
             .duration(this.durations.highlight)
-            .style("background-color", d => this.params.colors[d.outcome] || 'transparent')
+            .style("background-color", d => this.params.colors[outcomes.get(d.item)] || 'transparent')
             .transition()
             .delay(this.durations.highlightToMove)
             .duration(this.durations.move)
@@ -128,20 +113,24 @@ export default class {
             .transition()
             .delay(this.durations.moveToFade)
             .duration(this.durations.fade)
-            .style("background-color", 'transparent');
-
-
-        this.cells = this.rows.selectAll('td')
-            .data(result => [result.position.strict, result.item, result.total.total]);
-
-        this.cells
-            .transition()
-            .delay(this.durations.highlight + this.durations.highlightToMove + this.durations.move)
-            .duration(this.durations.fade)
-            .text(cell => cell);
-
-
-        this.currentRound = roundNumber;
+            .style("background-color", 'transparent')
+            .each(() => ++transitionsFinished)
+            .on('end', () => {
+                if (!--transitionsFinished) {
+                    this.table.remove();
+                    this.table = table.classed('hidden', false);
+                    this.rows = rows;
+                    this.cells = cells;
+                    this.currentRound = roundIndex;
+                    if (this.isPlaying) {
+                        if (this.currentRound === this.data.meta.lastRound) {
+                            this.pause();
+                        } else {
+                            setTimeout(this.next(), this.durations.freeze);
+                        }
+                    }
+                }
+            });
     }
 
     preview (roundNumber) {
@@ -184,28 +173,20 @@ export default class {
         }
     }
 
-    play (stopAt = this.data.meta.lastRound) {
+    play () {
         this.dispatch.call('play');
+        this.isPlaying = true;
 
         if (this.currentRound === this.data.meta.lastRound) {
             this.first();
         } else {
             this.next();
         }
-
-        this.timer = setInterval(() => {
-            if (this.currentRound === stopAt) {
-                this.dispatch.call('pause');
-            } else {
-                this.next();
-            }
-        }, this.durations.total);
-
     }
 
     pause () {
         this.dispatch.call('pause');
-        clearInterval(this.timer);
+        this.isPlaying = false;
     }
 
     drillDownToItem (item) {

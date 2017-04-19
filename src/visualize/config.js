@@ -36,7 +36,7 @@ export default {
     },
 
     speed: {
-        default: 2.0,
+        default: 1.0,
         parse: Number.parseFloat,
         validate: value => !Number.isNaN(value) && value > 0.0 && value <= 10.0
     },

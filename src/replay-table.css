@@ -56,6 +56,10 @@ h1 {
 	float: left;
 }
 
+.replayTable table.hidden {
+	visibility: hidden;
+}
+
 
 
 /* SLIDER ----------------------------------------------------------------------
@@ -95,7 +99,7 @@ h1 {
 	 width: 0;
 
  }
-.replayTable .slider .slider-avalible{
+.replayTable .slider .slider-available{
 	position: absolute;
 	display: block;
 	height: 100%;
