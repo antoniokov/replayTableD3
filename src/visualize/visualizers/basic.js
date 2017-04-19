@@ -2,6 +2,7 @@ import * as controls from '../controls';
 import toCamelCase from '../../helpers/general/to-camel-case';
 
 
+const columns = ['position', 'item', 'total'];
 const rowHeight = 22;
 const dispatchers = ['roundChange', 'play', 'pause', 'roundPreview', 'endPreview'];
 const durations = {
@@ -28,13 +29,13 @@ export default class {
 
         this.dispatch = d3.dispatch(...dispatchers);
 
-        const selector = params.id ? `#${params.id}` : '.replayTable';
-        this.renderControls(selector);
-        this.renderTable(selector);
+        this.selector = params.id ? `#${params.id}` : '.replayTable';
+        this.renderControls();
+        this.renderTable();
     }
 
-    renderControls(selector) {
-        const controlsSelector = d3.select(selector).append('div')
+    renderControls() {
+        const controlsSelector = d3.select(this.selector).append('div')
             .attr('class', 'controls');
 
         const roundMeta = this.data.results[this.currentRound].meta;
@@ -56,16 +57,12 @@ export default class {
         });
     }
 
-    renderTable (selector) {
-        const columns = ['position', 'item', 'total'];
-
-        const table = d3.select(selector).append('table');
+    renderTable () {
+        const table = d3.select(this.selector).append('table');
         this.thead = table.append('thead');
         this.tbody = table.append('tbody');
 
-        this.top = this.tbody.node().getBoundingClientRect().top;
-
-        const header = this.thead.append('tr')
+        this.header = this.thead.append('tr')
             .selectAll('th')
             .data(columns)
             .enter().append('th')
@@ -84,29 +81,55 @@ export default class {
     to (roundNumber) {
         this.dispatch.call('roundChange', this, this.data.results[roundNumber].meta);
 
+
+        /*
         const differences = this.data.results[roundNumber].results.map(result => {
             const previous = this.data.results[this.initialRound].results
                 .filter(res => res.item === result.item)[0].position.strict;
 
             return result.position.strict - previous;
         });
+        */
+
+        const table = d3.select(this.selector).append('table')
+            .style('visibility', 'hidden');
+        const thead = table.append('thead');
+        const tbody = table.append('tbody');
+
+        const header = thead.append('tr')
+            .selectAll('th')
+            .data(columns)
+            .enter().append('th')
+            .text(column => column);
+
+        const rows = tbody.selectAll('tr')
+            .data(this.data.results[roundNumber].results, k => k.item)
+            .enter().append('tr');
+
+        const cells = rows.selectAll('td')
+            .data(result => [result.position.strict, result.item, result.total.total])
+            .enter().append('td')
+            .text(cell => cell);
+
+        const currentYs = new Map(this.rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
+        const nextYs = new Map(rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
 
         this.rows = this.rows
             .data(this.data.results[roundNumber].results, k => k.item);
 
-        this.rows.transition().duration(this.durations.highlight)
-            .style("background-color", d => this.params.colors[d.outcome] || 'transparent');
-
-        this.rows.transition()
-            .delay(this.durations.highlight + this.durations.highlightToMove)
+        this.rows
+            .transition()
+            .duration(this.durations.highlight)
+            .style("background-color", d => this.params.colors[d.outcome] || 'transparent')
+            .transition()
+            .delay(this.durations.highlightToMove)
             .duration(this.durations.move)
-            .style('transform', (d,i) => `translateY(${differences[i]*rowHeight}px)`);
-
-
-        this.rows.transition()
-            .delay(this.durations.highlight + this.durations.highlightToMove + this.durations.move)
+            .style('transform', (d,i) => `translateY(${nextYs.get(d.item) - currentYs.get(d.item)}px)`)
+            .transition()
+            .delay(this.durations.moveToFade)
             .duration(this.durations.fade)
             .style("background-color", 'transparent');
+
 
         this.cells = this.rows.selectAll('td')
             .data(result => [result.position.strict, result.item, result.total.total]);
@@ -116,6 +139,7 @@ export default class {
             .delay(this.durations.highlight + this.durations.highlightToMove + this.durations.move)
             .duration(this.durations.fade)
             .text(cell => cell);
+
 
         this.currentRound = roundNumber;
     }
