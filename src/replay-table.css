@@ -67,7 +67,7 @@ h1 {
 
 .replayTable .slider{
 	position: relative;
-	height: 3px;
+	height: 2px;
 	background: rgba(0,0,0,0.1);
 	margin-bottom: 20px;
 }
@@ -78,6 +78,7 @@ h1 {
 	height: 16px;
 	background: #999;
 	top: -22px;
+	margin-left: -8px;
 	cursor: pointer;
 	border-top-left-radius: 3px;
 	border-top-right-radius: 3px;
