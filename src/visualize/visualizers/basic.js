@@ -26,7 +26,6 @@ export default class {
             total + this.durations[key],0);
 
         this.currentRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
-        this.isPlaying = false;
 
         this.dispatch = d3.dispatch(...dispatchers);
 
@@ -40,11 +39,14 @@ export default class {
             .attr('class', 'controls');
 
         const roundMeta = this.data.results[this.currentRound].meta;
+        const roundsTotalNumber = this.params.roundsTotalNumber || this.data.meta.lastRound;
 
         this.controls = {
             play: new controls.Play(controlsSelector, roundMeta, this.play.bind(this), this.pause.bind(this)),
             previous: new controls.Previous(controlsSelector, roundMeta, this.previous.bind(this)),
-            next: new controls.Next(controlsSelector, roundMeta, this.next.bind(this))
+            next: new controls.Next(controlsSelector, roundMeta, this.next.bind(this)),
+            slider: new controls.Slider(controlsSelector, this.data.meta.lastRound, roundsTotalNumber, roundMeta,
+                this.preview.bind(this), this.endPreview.bind(this), this.to.bind(this))
         };
 
         Object.keys(this.controls).forEach(ctrl => {
@@ -91,7 +93,7 @@ export default class {
         return new Map(rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
     }
 
-    to (roundIndex) {
+    to (roundIndex, callback) {
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
         const [table, rows, cells] = this.renderTable(roundIndex, false);
@@ -122,24 +124,20 @@ export default class {
                     this.rows = rows;
                     this.cells = cells;
                     this.currentRound = roundIndex;
-                    if (this.isPlaying) {
-                        if (this.currentRound === this.data.meta.lastRound) {
-                            this.pause();
-                        } else {
-                            setTimeout(this.next(), this.durations.freeze);
-                        }
+                    if (callback) {
+                        callback();
                     }
                 }
             });
     }
 
-    preview (roundNumber) {
-        if (roundNumber !== this.currentRound) {
-            this.dispatch.call('roundPreview', this, this.data.results[roundNumber].meta);
+    preview (roundIndex) {
+        if (roundIndex !== this.currentRound) {
+            this.dispatch.call('roundPreview', this, this.data.results[roundIndex].meta);
         }
 
         this.rows = this.rows
-            .data(this.data.results[roundNumber].results, k => k.item);
+            .data(this.data.results[roundIndex].results, k => k.item);
 
         this.cells = this.rows.selectAll('td')
             .data(result => [result.position.strict, result.item, result.total.total])
@@ -153,40 +151,46 @@ export default class {
         this.preview(this.currentRound);
     }
 
-    first () {
-        this.to(0);
+    first (callback) {
+        this.to(0, callback);
     }
 
-    last () {
-        this.to(this.data.meta.lastRound);
+    last (callback) {
+        this.to(this.data.meta.lastRound, callback);
     }
 
-    previous () {
+    previous (callback) {
         if (this.currentRound > 0) {
-            this.to(this.currentRound - 1);
+            this.to(this.currentRound - 1, callback);
         }
     }
 
-    next () {
+    next (callback) {
         if (this.currentRound < this.data.meta.lastRound) {
-            this.to(this.currentRound + 1);
+            this.to(this.currentRound + 1, callback);
         }
     }
 
-    play () {
+    play (stopAt = this.data.meta.lastRound) {
         this.dispatch.call('play');
-        this.isPlaying = true;
+
+        const playFunction = () => {
+            if (this.currentRound === stopAt) {
+                this.pause();
+            } else {
+                this.next(playFunction);
+            }
+        };
 
         if (this.currentRound === this.data.meta.lastRound) {
-            this.first();
+            this.first(playFunction);
         } else {
-            this.next();
+            this.next(playFunction);
         }
     }
 
     pause () {
         this.dispatch.call('pause');
-        this.isPlaying = false;
     }
 
     drillDownToItem (item) {
