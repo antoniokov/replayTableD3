@@ -31,7 +31,8 @@ export default class {
         this.toggle
             .transition()
             .duration(500)
-            .styleTween('left', () => d3.interpolateString(this.toggle.node().style.left, progress));
+            .styleTween('left', () => d3.interpolateString(this.toggle.node().style.left, progress))
+            .text(roundMeta.name);
 
         this.progress
             .transition()

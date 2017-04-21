@@ -28,6 +28,8 @@ export default class {
         this.currentRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
 
         this.dispatch = d3.dispatch(...dispatchers);
+        this.dispatch.on('play', () => this.isPlaying = true);
+        this.dispatch.on('pause', () => this.isPlaying = false);
 
         this.selector = params.id ? `#${params.id}` : '.replayTable';
         this.renderControls();
@@ -175,7 +177,7 @@ export default class {
         this.dispatch.call('play');
 
         const playFunction = () => {
-            if (this.currentRound === stopAt) {
+            if (this.currentRound === stopAt || !this.isPlaying) {
                 this.pause();
             } else {
                 this.next(playFunction);
