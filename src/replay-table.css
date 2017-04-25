@@ -1,3 +1,11 @@
+
+
+
+html{
+    font-family: 'Tahoma', sans-serif;
+}
+
+
 h1 {
 	color: green;
 }
@@ -14,46 +22,149 @@ h1 {
 	background-color: #FFECEC;
 }
 
+
+.replayTable{
+	position: relative;
+}
+.replayTable > .controls{}
+.replayTable > .controls > div{
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+	position: relative;
+	cursor: pointer;
+}
+.replayTable > .controls > div.disabled{
+	opacity: 0.5;
+	cursor: not-allowed;
+}
 .replayTable > .controls > .play {
-	width: 10px;
-	height: 10px;
-	background-color: black;
+	width: 14px;
+	height: 14px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	border-left: 12px solid #000;
+	border-top: 7px solid transparent;
+	border-bottom: 7px solid transparent;
+	border-right: 0 solid transparent;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
 }
 
 .replayTable > .controls > .pause {
-	width: 10px;
-	height: 10px;
-	background-color: gray;
+	width: 14px;
+	height: 14px;
+}
+.replayTable > .controls > .pause:before{
+	content: '';
+	display: block;
+	position: absolute;
+	width: 5px;
+	height: 100%;
+	background: #000;
+	left: 0;
+	top: 0;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+.replayTable > .controls > .pause:after{
+	content: '';
+	display: block;
+	position: absolute;
+	width: 5px;
+	height: 100%;
+	background: #000;
+	right: 0;
+	top: 0;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
 }
 
 .replayTable > .controls > .replay {
 	width: 10px;
 	height: 10px;
-	background-color: blue;
+	border: 2px solid #000;
+
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+}
+.replayTable > .controls > .replay:before{
+	content: '';
+	display: block;
+	position: absolute;
+	width: 8px;
+	height: 8px;
+	background: #fff;
+	right: -6px;
+	top: 4px;
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
+	-o-transform: rotate(-45deg);
+	transform: rotate(-45deg);
+}
+.replayTable > .controls > .replay:after{
+	content: '';
+	display: block;
+	position: absolute;
+	border: 4px solid transparent;
+	border-top-color: #000;
+	right: -7px;
+	top: 1px;
+	-webkit-transform: rotate(-45deg);
+	-moz-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
+	-o-transform: rotate(-45deg);
+	transform: rotate(-45deg);
 }
 
-.replayTable > .controls > .previous {
-	width: 10px;
-	height: 10px;
-	background-color: yellow;
+
+.replayTable > .controls > .previous ,
+.replayTable > .controls > .next{
+	width: 14px;
+	height: 14px;
 }
 
-.replayTable > .controls > .previous.disabled{
-	background-color: lightyellow;
+.replayTable > .controls > .previous:before  ,
+.replayTable > .controls > .next:before {
+	content: '';
+	position: absolute;
+	display: block;
+	top: 2px;
+	width: 8px;
+	height: 8px;
+	border-right: 2px solid #000;
+	border-top: 2px solid #000;
+}
+.replayTable > .controls > .previous:before {
+	left: 5px;
+
+	-webkit-transform: rotate(-135deg);
+	-moz-transform: rotate(-135deg);
+	-ms-transform: rotate(-135deg);
+	-o-transform: rotate(-135deg);
+	transform: rotate(-135deg);
+}
+.replayTable > .controls > .next:before {
+	right: 5px;
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	-o-transform: rotate(45deg);
+	transform: rotate(45deg);
 }
 
-.replayTable > .controls > .next {
-	width: 10px;
-	height: 10px;
-	background-color: green;
-}
 
-.replayTable > .controls > .next.disabled{
-	background-color: lightgreen;
-}
 
 .replayTable table {
-	float: left;
+	position: absolute;
+	left: 0;
+	top: 50px;
 }
 
 .replayTable table.hidden {
@@ -66,18 +177,21 @@ h1 {
 ----------------------------------------------------------------------------------------- */
 
 .replayTable .slider{
+	display: inline-block;
+	width: 120px;
 	position: relative;
-	height: 2px;
+	height: 1px;
 	background: rgba(0,0,0,0.1);
-	margin-bottom: 20px;
 }
 .replayTable .slider .slider-toggle{
 	position: absolute;
 	display: block;
 	width: 16px;
 	height: 16px;
-	background: #999;
-	top: -22px;
+	background: #fff;
+	border: 1px solid #999;
+    border-bottom: none;
+	top: -24px;
 	margin-left: -8px;
 	cursor: pointer;
 	border-top-left-radius: 3px;
@@ -85,14 +199,30 @@ h1 {
 	text-align: center;
 	line-height: 17px;
 	font-size: 10px;
-	color: #fff;
+	color: #000;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.replayTable .slider .slider-toggle:before{
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    left: -1px;
+    border-width: 8px 9px 0;
+    border-style: solid;
+    border-color: #fff transparent;
+    display: block;
+    width: 0;
+    z-index: 2;
 }
 .replayTable .slider .slider-toggle:after{
 	 content: '';
 	 position: absolute;
 	 bottom: -8px;
-	 left: 0;
-	 border-width: 8px 8px 0;
+	 left: -1px;
+	 border-width: 8px 9px 0;
 	 border-style: solid;
 	 border-color: #999 transparent;
 	 display: block;
@@ -115,5 +245,3 @@ h1 {
 	top: 0;
 	background: rgba(0,0,0,0.3);
 }
-.replayTable .slider{}
-.replayTable .slider{}
