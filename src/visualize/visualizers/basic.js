@@ -88,7 +88,7 @@ export default class {
             .data(result => [
                 Object.assign({}, result, { text: result.position.strict}),
                 Object.assign({}, result, { text: result.item}),
-                Object.assign({}, result, { text: result.total.total})
+                Object.assign({}, result, { text: result.points.total})
             ])
             .enter().append('td')
             .text(cell => cell.text);
@@ -149,7 +149,7 @@ export default class {
             .data(result => [
                 Object.assign({}, result, { text: result.position.strict}),
                 Object.assign({}, result, { text: result.item}),
-                Object.assign({}, result, { text: result.total.total})
+                    Object.assign({}, result, { text: result.points.total})
             ])
             .text(cell => cell.text);
     }

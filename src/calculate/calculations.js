@@ -10,7 +10,7 @@ const checkingFunctions = {
 
 
 export default {
-    'total': {
+    'points': {
         check: checkingFunctions.alwaysTrue,
         calculate: result => result.change || 0
     },

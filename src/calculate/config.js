@@ -11,7 +11,7 @@ export default {
     },
 
     orderBy: {
-        default: ['total'],
+        default: ['points'],
         parse: input => input.split(','),
         validate: value => validateArray(value, value => calculations.hasOwnProperty(value))
     }
