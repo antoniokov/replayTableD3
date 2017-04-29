@@ -111,6 +111,7 @@ export default class {
 
         let transitionsFinished = 0;
 
+
         this.cells
             .transition()
             .duration(this.durations.highlight)
@@ -145,10 +146,12 @@ export default class {
             .data(this.data.results[roundIndex].results, k => k.item);
 
         this.cells = this.rows.selectAll('td')
-            .data(result => [result.position.strict, result.item, result.total.total])
-            .transition()
-            .duration(this.durations.fade)
-            .text(cell => cell);
+            .data(result => [
+                Object.assign({}, result, { text: result.position.strict}),
+                Object.assign({}, result, { text: result.item}),
+                Object.assign({}, result, { text: result.total.total})
+            ])
+            .text(cell => cell.text);
     }
 
     endPreview (move = false) {
