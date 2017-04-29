@@ -21,7 +21,7 @@ const config = {
   },
   plugins: [
     new webpack.optimize.UglifyJsPlugin(),
-    new HtmlWebpackPlugin({template: './src/index.html'}),
+    new HtmlWebpackPlugin({template: './index.html'}),
     new ExtractTextPlugin("replay-table.css"),
     new webpack.DefinePlugin({'process.env': {NODE_ENV: JSON.stringify('production')}})
   ]

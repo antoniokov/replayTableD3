@@ -9,8 +9,8 @@ export default class {
 
         const rectangle = this.container.node().getBoundingClientRect();
         this.scale =  d3.scaleLinear()
-            .domain([0, roundsTotal])
             .range([0, rectangle.right - rectangle.left])
+            .domain([0, roundsTotal])
             .clamp(true);
 
         this.available = this.container.append('span')

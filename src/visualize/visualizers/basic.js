@@ -2,8 +2,6 @@ import * as controls from '../controls';
 import toCamelCase from '../../helpers/general/to-camel-case';
 
 
-const columns = ['position', 'item', 'total'];
-const rowHeight = 22;
 const dispatchers = ['roundChange', 'play', 'pause', 'roundPreview', 'endPreview'];
 const durations = {
     highlight: 500,
@@ -76,7 +74,7 @@ export default class {
 
         const header = thead.append('tr')
             .selectAll('th')
-            .data(columns)
+            .data(this.params.columns)
             .enter().append('th')
             .text(column => column);
 
@@ -155,7 +153,7 @@ export default class {
     }
 
     endPreview (move = false) {
-        if (!this.previewedRound || this.previewedRound === this.currentRound) {
+        if (this.previewedRound === null || this.previewedRound === this.currentRound) {
             this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
             return;
         }
