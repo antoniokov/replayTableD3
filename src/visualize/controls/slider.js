@@ -28,10 +28,7 @@ export default class {
                     const round = Math.round(this.scale.invert(d3.event.x));
                     preview(round);
                 })
-                .on("end", () => {
-                    const round = Math.round(this.scale.invert(d3.event.x));
-                    endPreview(true);
-                }));
+                .on("end", () => endPreview(true)));
 
         this.progress = this.container.append('span')
             .attr('class', 'slider-progress')

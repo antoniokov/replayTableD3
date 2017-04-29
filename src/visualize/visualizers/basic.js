@@ -155,7 +155,7 @@ export default class {
     }
 
     endPreview (move = false) {
-        if (this.previewedRound === this.currentRound) {
+        if (!this.previewedRound || this.previewedRound === this.currentRound) {
             this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
             return;
         }
