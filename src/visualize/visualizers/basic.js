@@ -26,10 +26,15 @@ export default class {
             total + this.durations[key],0);
 
         this.currentRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
+        this.previewedRound = null;
 
         this.dispatch = d3.dispatch(...dispatchers);
+
         this.dispatch.on('play', () => this.isPlaying = true);
         this.dispatch.on('pause', () => this.isPlaying = false);
+
+        this.dispatch.on('roundPreview', roundMeta => this.previewedRound = roundMeta.index);
+        this.dispatch.on('endPreview', roundMeta => this.previewedRound = null);
 
         this.selector = params.id ? `#${params.id}` : '.replayTable';
         this.renderControls();
@@ -134,9 +139,7 @@ export default class {
     }
 
     preview (roundIndex) {
-        if (roundIndex !== this.currentRound) {
-            this.dispatch.call('roundPreview', this, this.data.results[roundIndex].meta);
-        }
+        this.dispatch.call('roundPreview', this, this.data.results[roundIndex].meta);
 
         this.rows = this.rows
             .data(this.data.results[roundIndex].results, k => k.item);
@@ -148,9 +151,19 @@ export default class {
             .text(cell => cell);
     }
 
-    endPreview () {
+    endPreview (move = false) {
+        if (this.previewedRound === this.currentRound) {
+            this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
+            return;
+        }
+
+        if (!move) {
+            this.preview(this.currentRound);
+        } else {
+            this.to(this.previewedRound);
+        }
+
         this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
-        this.preview(this.currentRound);
     }
 
     first (callback) {
