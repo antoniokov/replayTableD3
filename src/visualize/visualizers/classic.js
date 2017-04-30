@@ -1,4 +1,4 @@
-import getColumns from '../table/get-columns';
+
 
 
 export default function (data, params) {
