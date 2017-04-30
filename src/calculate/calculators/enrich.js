@@ -17,14 +17,24 @@ export default function (transformedData, params) {
             const calculatedResult = Object.assign({}, result);
             const stats = itemStats[result.item];
 
-            calculations.forEach(calc => {
-                const change = calculatables[calc].calculate(calculatedResult);
-                calculatedResult[calc] = {
-                    change: change,
-                    total: stats[calc] + change
-                };
-                stats[calc] += change;
-            });
+            calculations.filter(calc => !calculatables[calc].isPost)
+                .forEach(calc => {
+                    const change = calculatables[calc].calculate(calculatedResult);
+                    calculatedResult[calc] = {
+                        change: change,
+                        total: stats[calc] + change
+                    };
+                    stats[calc] += change;
+                });
+
+            calculations.filter(calc => calculatables[calc].isPost)
+                .forEach(calc => {
+                    const total = calculatables[calc].calculate(calculatedResult);
+                    calculatedResult[calc] = {
+                        change: null,
+                        total: total
+                    }
+                });
 
             return calculatedResult;
         });

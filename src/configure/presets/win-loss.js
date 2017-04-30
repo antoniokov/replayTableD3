@@ -8,10 +8,11 @@ export default {
         }
     },
     calculate: {
-        orderBy: ['winningPercentage']
+        orderBy: ['winningPercentage', 'wins']
     },
     visualize: {
-        visualizer: 'classic-american',
-        columns: ['position', 'item', 'rounds', 'wins', 'losses', 'match', 'opponent']
+        visualizer: 'basic',
+        columns: ['position', 'item', 'rounds', 'wins', 'losses', 'winningPercentage'],
+        labels: ['#', 'Team', 'G', 'W' , 'L', 'Win %']
     }
 };

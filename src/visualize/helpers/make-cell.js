@@ -17,6 +17,12 @@ export default function (column, result, params) {
                 text: result.item,
                 classes: ['item']
             };
+        case 'winningPercentage':
+            return {
+                item: result.item,
+                text: result.winningPercentage.total.toFixed(3).toString().replace('0',''),
+                classes: ['calculation']
+            };
         default:
             if (calculations.hasOwnProperty(column)) {
                 return {

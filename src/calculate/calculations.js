@@ -42,4 +42,11 @@ export default {
         check: checkingFunctions.hasMatches,
         calculate: result => result.match ? result.match.opponentScore : 0
     },
+
+
+    'winningPercentage': {
+        check: checkingFunctions.hasOutcome('win'),
+        calculate: calculatedResult => calculatedResult.rounds.total ? calculatedResult.wins.total / calculatedResult.rounds.total : 0,
+        isPost: true
+    }
 };

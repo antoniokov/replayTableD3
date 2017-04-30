@@ -7,19 +7,9 @@ export default {
             0: 'loss'
         }
     },
-    calculate: {
-        orderBy: ['total', 'wins']
-    },
+    calculate: {},
     visualize: {
-        labels: {
-            'season': 'Турнир',
-            'round': 'Вопрос',
-            'changes': 'Вопрос',
-            'position': 'Место',
-            'item': 'Команда',
-            'total': 'Взято',
-            'change': 'Вопрос'
-        },
+        labels: ['#', 'Команда', 'Взятых'],
         positionWhenTied: 'range'
     }
 };
