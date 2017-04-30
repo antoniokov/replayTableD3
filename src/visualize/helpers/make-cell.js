@@ -1,5 +1,6 @@
 import formatPosition from './format-position';
 import calculations from '../../calculate/calculations';
+import mapParamToModule from '../../configure/helpers/map-param-to-module';
 
 
 export default function (column, result, params) {
@@ -24,10 +25,20 @@ export default function (column, result, params) {
                     classes: ['calculation']
                 }
             } else {
-                return {
-                    item: result.item,
-                    text: '',
-                    classes: []
+                const extraType = mapParamToModule(column, result.extras);
+
+                if (extraType) {
+                    return {
+                        item: result.item,
+                        text: result.extras[extraType][column],
+                        classes: ['extra']
+                    }
+                } else {
+                    return {
+                        item: result.item,
+                        text: '',
+                        classes: []
+                    }
                 }
             }
     }
