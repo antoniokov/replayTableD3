@@ -54,13 +54,13 @@ export default class {
         const roundsTotalNumber = this.params.roundsTotalNumber || this.data.meta.lastRound;
 
         this.controls = {};
-        const params = {
+        const args = {
             play: [controlsSelector, roundMeta, this.play, this.pause],
             previous: [controlsSelector, roundMeta, this.previous],
             next: [controlsSelector, roundMeta, this.next],
             slider: [controlsSelector, this.data.meta.lastRound, roundsTotalNumber, roundMeta, this.preview, this.endPreview]
         };
-        controls.forEach(control => this.controls[control] = new Controls[control](...params[control]));
+        controls.forEach(control => this.controls[control] = new Controls[control](...args[control]));
 
         Object.keys(this.controls).forEach(ctrl => {
             const control = this.controls[ctrl];
@@ -84,7 +84,7 @@ export default class {
             .selectAll('th')
             .data(this.params.columns)
             .enter().append('th')
-            .text(column => column);
+            .text(column => this.params.labels[column]);
 
         const rows = tbody.selectAll('tr')
             .data(this.data.results[roundNumber].results, k => k.item)
@@ -113,24 +113,28 @@ export default class {
         const currentYs = this.getItemsYs(this.rows);
         const nextYs = this.getItemsYs(rows);
 
-        const outcomes = new Map(this.data.results[roundIndex].results.map(result => [result.item, result.outcome]));
+        //const outcomes = new Map(this.data.results[roundIndex].results.map(result => [result.item, result.outcome]));
 
         let transitionsFinished = 0;
 
 
         return new Promise((resolve, reject) => {
             this.cells
+                /*
                 .transition()
                 .duration(this.durations.highlight)
                 .style("background-color", d => this.params.colors[outcomes.get(d.item)] || 'transparent')
+                */
                 .transition()
                 .delay(this.durations.highlightToMove)
                 .duration(this.durations.move)
                 .style('transform', (d, i) => `translateY(${nextYs.get(d.item) - currentYs.get(d.item)}px)`)
+                /*
                 .transition()
                 .delay(this.durations.moveToFade)
                 .duration(this.durations.fade)
                 .style("background-color", 'transparent')
+                */
                 .each(() => ++transitionsFinished)
                 .on('end', () => {
                     if (!--transitionsFinished) {
