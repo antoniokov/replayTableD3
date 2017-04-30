@@ -1,4 +1,4 @@
-import * as controls from '../controls';
+import * as Controls from '../controls';
 import toCamelCase from '../../helpers/general/to-camel-case';
 
 
@@ -42,12 +42,12 @@ export default class {
         this.dispatch.on('endPreview', roundMeta => this.previewedRound = null);
 
         this.selector = params.id ? `#${params.id}` : '.replayTable';
-        this.renderControls();
+        this.renderControls(this.params.controls);
         [this.table, this.rows, this.cells] = this.renderTable(this.currentRound);
     }
 
-    renderControls() {
-        const selector = d3.select(this.selector).append('div')
+    renderControls(controls) {
+        const controlsSelector = d3.select(this.selector).append('div')
             .attr('class', 'controls');
 
         const roundMeta = this.data.results[this.currentRound].meta;
@@ -55,12 +55,12 @@ export default class {
 
         this.controls = {};
         const params = {
-            play: [selector, roundMeta, this.play, this.pause],
-            previous: [selector, roundMeta, this.previous],
-            next: [selector, roundMeta, this.next],
-            slider: [selector, this.data.meta.lastRound, roundsTotalNumber, roundMeta, this.preview, this.endPreview]
+            play: [controlsSelector, roundMeta, this.play, this.pause],
+            previous: [controlsSelector, roundMeta, this.previous],
+            next: [controlsSelector, roundMeta, this.next],
+            slider: [controlsSelector, this.data.meta.lastRound, roundsTotalNumber, roundMeta, this.preview, this.endPreview]
         };
-        this.params.controls.forEach(control => this.controls[control] = new controls[control](...params[control]));
+        controls.forEach(control => this.controls[control] = new Controls[control](...params[control]));
 
         Object.keys(this.controls).forEach(ctrl => {
             const control = this.controls[ctrl];
