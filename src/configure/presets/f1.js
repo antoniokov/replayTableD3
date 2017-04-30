@@ -8,13 +8,10 @@ export default {
         insertStartRound: 'Start →'
     },
     calculate: {
-        orderBy: ['total', 'wins']
+        orderBy: ['points', 'wins']
     },
     visualize: {
-        columns: ['position', 'item', 'change', 'total'],
-        labels: {
-            'round': 'Race',
-            'item': 'Driver'
-        }
+        columns: ['position', 'item', 'points'],
+        labels: ['#', 'Driver', 'Points']
     }
 };

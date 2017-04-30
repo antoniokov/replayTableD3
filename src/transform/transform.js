@@ -1,11 +1,12 @@
+import moduleConfig from './config';
+import * as transformersConfig from './configs';
+import initialize from '../configure/initialize'
 import * as transformers from './transformers';
 import * as postTransformers from './post-transformers';
-import parametrize from '../configure/parametrize';
-import config from './config';
 
 
 export default function (rawData, userConfig) {
-    const params = parametrize(config, userConfig);
+    const params = initialize('transformer', moduleConfig, transformersConfig, userConfig);
 
     const transformed = transformers[params.transformer](rawData, params);
 

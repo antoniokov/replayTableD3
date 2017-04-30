@@ -5,6 +5,7 @@ export default function (processorField, moduleConfig, processorsConfigs, userCo
     const processor = parametrize({ [processorField]: moduleConfig[processorField] },
                                   { [processorField]: userConfig[processorField]})[processorField];
 
+
     const config = processorsConfigs.hasOwnProperty(processor)
         ? Object.assign({}, moduleConfig, processorsConfigs[processor])
         : moduleConfig;

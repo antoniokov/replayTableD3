@@ -16,7 +16,7 @@ Array.from(document.getElementsByClassName('replayTable'))
             .then(raw => {
                 const transformed = transform(raw, config.transform);
                 const calculated = calculate(transformed, config.calculate);
-                visualize(calculated, config.visualize);
+                const replayTable = visualize(calculated, config.visualize);
             })
             .catch(error => crash(error));
     });

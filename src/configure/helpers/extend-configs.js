@@ -1,7 +1,7 @@
 import * as extensions from '../extensions';
 
 
-export default function (configs, userConfig) {
+export default function (configs, presetConfig, userConfig) {
     return Object.keys(configs).map(module => {
         if (!extensions.hasOwnProperty(module)) {
             return {
@@ -13,7 +13,7 @@ export default function (configs, userConfig) {
         const processorField = extensions[module].processorField;
         const processor = configs[module][processorField].validate(userConfig[processorField])
             ? userConfig[processorField]
-            : configs[module][processorField].default;
+            : presetConfig[module][processorField] || configs[module][processorField].default;
 
         const config = extensions[module].configs[processor]
             ? Object.assign({}, configs[module], extensions[module].configs[processor])
