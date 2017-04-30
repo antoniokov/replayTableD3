@@ -12,20 +12,14 @@ export default {
     },
 
     columns: {
-        default: ['position', 'item', 'total'],
+        default: ['position', 'item', 'points'],
         parse: input => input.split(','),
         validate: value => validateArray(value, isString)
     },
 
     labels: {
-        default: {
-            position: '#',
-            item: 'Team',
-            total: 'Points'
-        },
-        parse: parseObject,
-        validate: obj => validateObject(obj,
-            key => ['position', 'item', 'total'].includes(key),
-            value => isString(value))
+        default: ['#', 'Team', 'Points'],
+        parse: input => input.split(','),
+        validate: value => validateArray(value, isString)
     }
 };

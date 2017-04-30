@@ -25,7 +25,7 @@ export default class {
             .text(roundMeta.name)
             .call(d3.drag()
                 .on("drag", () => {
-                    const round = Math.round(this.scale.invert(d3.event.x));
+                    const round = Math.min(Math.round(this.scale.invert(d3.event.x)), roundsAvailable);
                     preview(round);
                 })
                 .on("end", () => endPreview(true)));

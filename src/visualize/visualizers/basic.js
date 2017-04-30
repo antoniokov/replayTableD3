@@ -1,4 +1,6 @@
 import * as Controls from '../controls';
+import makeCell from '../helpers/make-cell';
+import fromCamelCase from '../../helpers/general/from-camel-case';
 import toCamelCase from '../../helpers/general/to-camel-case';
 
 
@@ -84,19 +86,16 @@ export default class {
             .selectAll('th')
             .data(this.params.columns)
             .enter().append('th')
-            .text(column => this.params.labels[column]);
+            .text((column, i) => this.params.labels[i] || fromCamelCase(column));
 
         const rows = tbody.selectAll('tr')
             .data(this.data.results[roundNumber].results, k => k.item)
             .enter().append('tr');
 
         const cells = rows.selectAll('td')
-            .data(result => [
-                Object.assign({}, result, { text: result.position.strict}),
-                Object.assign({}, result, { text: result.item}),
-                Object.assign({}, result, { text: result.points.total})
-            ])
+            .data(result => this.params.columns.map(column => makeCell(column, result, this.params)))
             .enter().append('td')
+            .attr('class', cell => cell.classes.join(' '))
             .text(cell => cell.text);
 
         return [table, rows, cells];
@@ -156,11 +155,8 @@ export default class {
             .data(this.data.results[roundIndex].results, k => k.item);
 
         this.cells = this.rows.selectAll('td')
-            .data(result => [
-                Object.assign({}, result, { text: result.position.strict}),
-                Object.assign({}, result, { text: result.item}),
-                    Object.assign({}, result, { text: result.points.total})
-            ])
+            .data(result => this.params.columns.map(column => makeCell(column, result, this.params)))
+            .attr('class', cell => cell.classes.join(' '))
             .text(cell => cell.text);
     }
 

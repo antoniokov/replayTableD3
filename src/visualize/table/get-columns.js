@@ -7,7 +7,7 @@ const getClassesFunction = className => (item, result) => [className];
 export default function (data, params) {
     const columns = [];
     params.columns.forEach(column => {
-        const sampleResult = data.results[0].results.values().next().value;
+        const sampleResult = data.results[0].results[0];
 
         if (predefinedColumns.hasOwnProperty(column)) {
             columns.push({
