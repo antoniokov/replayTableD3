@@ -1,4 +1,4 @@
-export {default as Play} from './play';
-export {default as Previous} from './previous';
-export {default as Next} from './next';
-export {default as Slider} from './slider';
+export {default as play} from './play';
+export {default as previous} from './previous';
+export {default as next} from './next';
+export {default as slider} from './slider';

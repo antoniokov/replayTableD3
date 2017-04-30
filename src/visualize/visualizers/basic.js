@@ -18,6 +18,13 @@ export default class {
         this.data = data;
         this.params = params;
 
+        this.play = this.play.bind(this);
+        this.pause = this.pause.bind(this);
+        this.previous = this.previous.bind(this);
+        this.next = this.next.bind(this);
+        this.preview = this.preview.bind(this);
+        this.endPreview = this.endPreview.bind(this);
+
         this.durations = Object.keys(durations).reduce((obj, key) =>
             Object.assign(obj, { [key]: durations[key]/params.speed }), {});
         this.durations.total = Object.keys(durations).reduce((total, key) =>
@@ -40,19 +47,20 @@ export default class {
     }
 
     renderControls() {
-        const controlsSelector = d3.select(this.selector).append('div')
+        const selector = d3.select(this.selector).append('div')
             .attr('class', 'controls');
 
         const roundMeta = this.data.results[this.currentRound].meta;
         const roundsTotalNumber = this.params.roundsTotalNumber || this.data.meta.lastRound;
 
-        this.controls = {
-            play: new controls.Play(controlsSelector, roundMeta, this.play.bind(this), this.pause.bind(this)),
-            previous: new controls.Previous(controlsSelector, roundMeta, this.previous.bind(this)),
-            next: new controls.Next(controlsSelector, roundMeta, this.next.bind(this)),
-            slider: new controls.Slider(controlsSelector, this.data.meta.lastRound, roundsTotalNumber, roundMeta,
-                this.preview.bind(this), this.endPreview.bind(this), this.to.bind(this))
+        this.controls = {};
+        const params = {
+            play: [selector, roundMeta, this.play, this.pause],
+            previous: [selector, roundMeta, this.previous],
+            next: [selector, roundMeta, this.next],
+            slider: [selector, this.data.meta.lastRound, roundsTotalNumber, roundMeta, this.preview, this.endPreview]
         };
+        this.params.controls.forEach(control => this.controls[control] = new controls[control](...params[control]));
 
         Object.keys(this.controls).forEach(ctrl => {
             const control = this.controls[ctrl];
@@ -98,7 +106,7 @@ export default class {
         return new Map(rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
     }
 
-    to (roundIndex, callback) {
+    to (roundIndex) {
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
         const [table, rows, cells] = this.renderTable(roundIndex, false);
@@ -110,31 +118,31 @@ export default class {
         let transitionsFinished = 0;
 
 
-        this.cells
-            .transition()
-            .duration(this.durations.highlight)
-            .style("background-color", d => this.params.colors[outcomes.get(d.item)] || 'transparent')
-            .transition()
-            .delay(this.durations.highlightToMove)
-            .duration(this.durations.move)
-            .style('transform', (d,i) => `translateY(${nextYs.get(d.item) - currentYs.get(d.item)}px)`)
-            .transition()
-            .delay(this.durations.moveToFade)
-            .duration(this.durations.fade)
-            .style("background-color", 'transparent')
-            .each(() => ++transitionsFinished)
-            .on('end', () => {
-                if (!--transitionsFinished) {
-                    this.table.remove();
-                    this.table = table.classed('hidden', false);
-                    this.rows = rows;
-                    this.cells = cells;
-                    this.currentRound = roundIndex;
-                    if (callback) {
-                        callback();
+        return new Promise((resolve, reject) => {
+            this.cells
+                .transition()
+                .duration(this.durations.highlight)
+                .style("background-color", d => this.params.colors[outcomes.get(d.item)] || 'transparent')
+                .transition()
+                .delay(this.durations.highlightToMove)
+                .duration(this.durations.move)
+                .style('transform', (d, i) => `translateY(${nextYs.get(d.item) - currentYs.get(d.item)}px)`)
+                .transition()
+                .delay(this.durations.moveToFade)
+                .duration(this.durations.fade)
+                .style("background-color", 'transparent')
+                .each(() => ++transitionsFinished)
+                .on('end', () => {
+                    if (!--transitionsFinished) {
+                        this.table.remove();
+                        this.table = table.classed('hidden', false);
+                        this.rows = rows;
+                        this.cells = cells;
+                        this.currentRound = roundIndex;
+                        resolve();
                     }
-                }
-            });
+                })
+        });
     }
 
     preview (roundIndex) {
@@ -167,23 +175,23 @@ export default class {
         this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
     }
 
-    first (callback) {
-        this.to(0, callback);
+    first () {
+        return this.to(0);
     }
 
-    last (callback) {
-        this.to(this.data.meta.lastRound, callback);
+    last () {
+        return this.to(this.data.meta.lastRound);
     }
 
-    previous (callback) {
+    previous () {
         if (this.currentRound > 0) {
-            this.to(this.currentRound - 1, callback);
+            return this.to(this.currentRound - 1);
         }
     }
 
-    next (callback) {
+    next () {
         if (this.currentRound < this.data.meta.lastRound) {
-            this.to(this.currentRound + 1, callback);
+            return this.to(this.currentRound + 1);
         }
     }
 
@@ -194,14 +202,17 @@ export default class {
             if (this.currentRound === stopAt || !this.isPlaying) {
                 this.pause();
             } else {
-                this.next(playFunction);
+                Promise.resolve(this.next())
+                    .then(playFunction);
             }
         };
 
         if (this.currentRound === this.data.meta.lastRound) {
-            this.first(playFunction);
+            Promise.resolve(this.first())
+                .then(playFunction)
         } else {
-            this.next(playFunction);
+            Promise.resolve(this.next())
+                .then(playFunction)
         }
     }
 

@@ -6,7 +6,7 @@ import isString from '../../helpers/general/is-string';
 
 export default {
     controls: {
-        default: ['play', 'previous', 'next'],
+        default: ['play', 'previous', 'next', 'slider'],
         parse: input => input.split(','),
         validate: value => validateArray(value, value => controls.hasOwnProperty(value))
     },

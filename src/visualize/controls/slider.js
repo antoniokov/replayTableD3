@@ -1,5 +1,5 @@
 export default class {
-    constructor (selector, roundsAvailable, roundsTotal, roundMeta, preview, endPreview, to) {
+    constructor (selector, roundsAvailable, roundsTotal, roundMeta, preview, endPreview) {
         this.container = selector.append('div')
             .attr('class', 'slider');
 
