@@ -3,17 +3,44 @@
 <head>
 	<meta charset="utf-8">
 	<title>Replay Table</title>
-	<link rel="stylesheet" type="text/css" href="./replay-table.css">
 	<script src="https://d3js.org/d3.v4.min.js"></script>
-<link href="/replay-table.css" rel="stylesheet"></head>
+<link href="replay-table.css" rel="stylesheet"></head>
 
 <body>
 	<h1>Example</h1>
+
 	<div class="replayTable" id="english-premier-league"
 		 data-source="./assets/csv/football/2015-2016/english-premier-league.csv"
-		 data-transformer="listOfMatches"
-		 data-collapse-to-rounds="true">
+		 data-preset="matches">
 	</div>
-	
-<script type="text/javascript" src="/replay-table.min.js"></script></body>
+
+	<!--
+	<div class="replayTable" id="russian-premier-league"
+		 data-source="./assets/csv/requests/2016/lebedian-rpfl16-17.csv"
+		 data-preset="matches"
+		 data-columns="position,item,rounds,wins,draws,losses,goalsFor,goalsAgainst,points"
+		 data-labels="#,Команда,И,В,Н,П,ГЗ,ГП,Очки"
+		 data-rounds-total-number="30">
+	</div>
+
+	<div class="replayTable" id="formula-one-2016-drivers"
+		 data-source="./assets/csv/formula-one/2016/drivers.csv"
+		 data-preset="f1"
+		 data-extra-columns-number="1"
+		 data-columns="position,item,Team,points"
+		 data-labels="#,Driver,Team,Points">
+	</div>
+
+	<div class="replayTable"
+         data-csv="/csv/basketball/2015-2016/nba-western.csv"
+         data-preset="WinsLosses"
+         data-round-name="Gameday"
+         data-add-start-round="Start"
+         data-items-to-show="Golden State Warriors,San Antonio Spurs,Oklahoma City Thunder,Los Angeles Clippers,Portland Trail Blazers,Dallas Mavericks,Memphis Grizzlies,Houston Rockets,Utah Jazz,Sacramento Kings,Denver Nuggets,New Orleans Pelicans,Minnesota Timberwolves,Phoenix Suns,Los Angeles Lakers"
+         data-table-name="nba-western">
+    </div>
+	-->
+
+
+<script type="text/javascript" src="replay-table.min.js"></script></body>
 </html>
