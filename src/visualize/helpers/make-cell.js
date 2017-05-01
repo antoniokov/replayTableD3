@@ -26,6 +26,13 @@ export default function (column, result, params) {
                 text: '',
                 classes: ['outcome']
             };
+        case 'match':
+            return {
+                column: 'match',
+                result: result,
+                text: `${result.match.score}-${result.match.opponentScore} ${result.match.opponent}`,
+                classes: ['change']
+            };
         case 'winningPercentage':
             return {
                 column: 'winningPercentage',

@@ -1,6 +1,3 @@
-
-
-
 html{
     font-family: 'Tahoma', sans-serif;
 }
@@ -238,4 +235,9 @@ h1 {
 
 .replayTable td.outcome {
 	width: 5px;
+}
+
+.replayTable td.change {
+	color: gray;
+	font-size: 0.8rem;
 }

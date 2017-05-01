@@ -112,16 +112,19 @@ export default class {
         const currentYs = this.getItemsYs(this.rows);
         const nextYs = this.getItemsYs(rows);
 
+        const newResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
+
         const animateOutcomes = this.params.columns.includes('outcome');
 
         if (animateOutcomes) {
-            const outcomes = new Map(this.data.results[roundIndex].results.map(result => [result.item, result.outcome]));
-
             d3.selectAll(`${this.selector} table.main td.outcome`)
                 .transition()
                 .duration(this.durations.outcomes)
-                .style("background-color", cell => this.params.colors[outcomes.get(cell.result.item)] || 'transparent');
+                .style("background-color", cell => this.params.colors[newResults.get(cell.result.item).outcome] || 'transparent');
         }
+
+        d3.selectAll(`${this.selector} td.change`)
+            .text(cell => makeCell(cell.column, newResults.get(cell.result.item), this.params).text);
 
         return new Promise((resolve, reject) => {
             let transitionsFinished = 0;

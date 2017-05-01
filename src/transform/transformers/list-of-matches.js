@@ -32,7 +32,7 @@ export default function (rawData, params) {
                         change: outcomeToChange[outcome],
                         outcome: outcome,
                         match: teamResult.match,
-                        extras: null
+                        extras: {}
                     });
                 });
             });
@@ -44,7 +44,7 @@ export default function (rawData, params) {
                     item: name,
                     change: null,
                     match: null,
-                    extras: null
+                    extras: {}
                 });
             });
 
