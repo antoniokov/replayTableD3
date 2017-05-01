@@ -126,6 +126,10 @@ export default class {
     }
 
     to (roundIndex) {
+        if (roundIndex < 0 || roundIndex > this.data.meta.lastRound) {
+            return Promise.reject(`Sorry we can't go to round #${roundIndex}`);
+        }
+
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
         const newResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
