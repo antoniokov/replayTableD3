@@ -1,5 +1,6 @@
-import formatPosition from './format-position';
 import calculations from '../../calculate/calculations';
+import numberToChange from '../../helpers/general/number-to-change';
+import formatPosition from './format-position';
 import mapParamToModule from '../../configure/helpers/map-param-to-module';
 
 
@@ -26,11 +27,18 @@ export default function (column, result, params) {
                 text: '',
                 classes: ['outcome']
             };
+        case 'points.change':
+            return {
+                column: 'points.change',
+                result: result,
+                text: numberToChange(result.points.change),
+                classes: ['change']
+            };
         case 'match':
             return {
                 column: 'match',
                 result: result,
-                text: `${result.match.score}-${result.match.opponentScore} ${result.match.opponent}`,
+                text: result.match ? `${result.match.score}-${result.match.opponentScore} ${result.match.opponent}` : '',
                 classes: ['change']
             };
         case 'winningPercentage':
@@ -47,7 +55,15 @@ export default function (column, result, params) {
                     result: result,
                     text: result[column].total,
                     classes: ['calculation']
-                }
+                };
+            } else if (column.includes('.change')) {
+                const calc = column.replace('.change', '');
+                return {
+                    column: column,
+                    result: result,
+                    text: result[calc].change,
+                    classes: ['change']
+                };
             } else {
                 const extraType = mapParamToModule(column, result.extras);
 
@@ -57,14 +73,14 @@ export default function (column, result, params) {
                         result: result,
                         text: result.extras[extraType][column],
                         classes: ['extra']
-                    }
+                    };
                 } else {
                     return {
                         column: column,
                         result: result,
                         text: '',
                         classes: []
-                    }
+                    };
                 }
             }
     }

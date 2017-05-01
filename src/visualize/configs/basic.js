@@ -12,20 +12,14 @@ export default {
     },
 
     columns: {
-        default: ['position', 'item', 'points', 'outcome'],
+        default: ['position', 'item', 'points'],
         parse: input => input.split(','),
         validate: value => validateArray(value, isString)
     },
 
     labels: {
-        default: ['#', 'Team', 'Points', ''],
+        default: ['#', 'Team', 'Points'],
         parse: input => input.split(','),
         validate: value => validateArray(value, isString)
-    },
-
-    colorAnimation: {
-        default: false,
-        parse: input => input === "true",
-        validate: typeof value === 'boolean'
     }
 };

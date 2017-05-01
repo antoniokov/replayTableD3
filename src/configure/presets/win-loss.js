@@ -12,7 +12,7 @@ export default {
     },
     visualize: {
         visualizer: 'basic',
-        columns: ['position', 'item', 'rounds', 'wins', 'losses', 'winningPercentage'],
-        labels: ['#', 'Team', 'G', 'W' , 'L', 'Win %']
+        columns: ['position', 'item', 'rounds', 'wins', 'losses', 'winningPercentage', 'outcome', 'match'],
+        labels: ['#', 'Team', 'G', 'W' , 'L', 'Win %', ' ', ' ']
     }
 };

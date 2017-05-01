@@ -9,7 +9,8 @@ export default {
     },
     calculate: {},
     visualize: {
-        labels: ['#', 'Команда', 'Взятых'],
+        columns: ['position', 'item', 'points', 'outcome'],
+        labels: ['#', 'Команда', 'Взятых', ' '],
         positionWhenTied: 'range'
     }
 };

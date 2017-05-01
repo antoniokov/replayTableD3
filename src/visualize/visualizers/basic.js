@@ -115,7 +115,6 @@ export default class {
         const newResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
 
         const animateOutcomes = this.params.columns.includes('outcome');
-
         if (animateOutcomes) {
             d3.selectAll(`${this.selector} table.main td.outcome`)
                 .transition()
@@ -123,7 +122,7 @@ export default class {
                 .style("background-color", cell => this.params.colors[newResults.get(cell.result.item).outcome] || 'transparent');
         }
 
-        d3.selectAll(`${this.selector} td.change`)
+        d3.selectAll(`${this.selector} table.main td.change`)
             .text(cell => makeCell(cell.column, newResults.get(cell.result.item), this.params).text);
 
         return new Promise((resolve, reject) => {
