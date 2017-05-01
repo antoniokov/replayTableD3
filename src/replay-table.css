@@ -10,18 +10,6 @@ h1 {
 	color: green;
 }
 
-.win {
-	background-color: #EDFFDF;
-}
-
-.draw {
-	background-color: #F3F3F3;
-}
-
-.loss {
-	background-color: #FFECEC;
-}
-
 
 .replayTable{
 	position: relative;
@@ -244,4 +232,10 @@ h1 {
 	left: 0;
 	top: 0;
 	background: rgba(0,0,0,0.3);
+}
+
+
+
+.replayTable td.outcome {
+	width: 5px;
 }

@@ -6,12 +6,9 @@ import toCamelCase from '../../helpers/general/to-camel-case';
 
 const dispatchers = ['roundChange', 'play', 'pause', 'roundPreview', 'endPreview'];
 const durations = {
-    highlight: 500,
-    highlightToMove: 200,
     move: 750,
-    moveToFade: 0,
-    fade: 250,
-    freeze: 500,
+    freeze: 750,
+    outcomes: 200
 };
 
 
@@ -29,8 +26,6 @@ export default class {
 
         this.durations = Object.keys(durations).reduce((obj, key) =>
             Object.assign(obj, { [key]: durations[key]/params.speed }), {});
-        this.durations.total = Object.keys(durations).reduce((total, key) =>
-            total + this.durations[key],0);
 
         this.currentRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
         this.previewedRound = null;
@@ -79,7 +74,7 @@ export default class {
 
     renderTable (roundNumber, isVisible = true) {
         const table = d3.select(this.selector).append('table')
-            .classed('hidden', !isVisible);
+            .attr('class', () => isVisible ? 'main' : 'hidden');
 
         const thead = table.append('thead');
         const tbody = table.append('tbody');
@@ -98,6 +93,9 @@ export default class {
             .data(result => this.params.columns.map(column => makeCell(column, result, this.params)))
             .enter().append('td')
             .attr('class', cell => cell.classes.join(' '))
+            .style('background-color', cell => cell.column === 'outcome'
+                ? this.params.colors[cell.result.outcome] || 'transparent'
+                : 'transparent')
             .text(cell => cell.text);
 
         return [table, rows, cells];
@@ -107,47 +105,37 @@ export default class {
         return new Map(rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
     }
 
-    to (roundIndex) {
+    to (roundIndex, options = {}) {
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
         const [table, rows, cells] = this.renderTable(roundIndex, false);
         const currentYs = this.getItemsYs(this.rows);
         const nextYs = this.getItemsYs(rows);
 
-        const outcomes = new Map(this.data.results[roundIndex].results.map(result => [result.item, result.outcome]));
+        const animateOutcomes = this.params.columns.includes('outcome');
 
+        if (animateOutcomes) {
+            const outcomes = new Map(this.data.results[roundIndex].results.map(result => [result.item, result.outcome]));
+
+            d3.selectAll(`${this.selector} table.main td.outcome`)
+                .transition()
+                .duration(this.durations.outcomes)
+                .style("background-color", cell => this.params.colors[outcomes.get(cell.result.item)] || 'transparent');
+        }
 
         return new Promise((resolve, reject) => {
-            let transition = this.cells;
-
-            if (this.params.colorAnimation) {
-                transition = this.cells
-                    .transition()
-                    .duration(this.durations.highlight)
-                    .style("background-color", d => this.params.colors[outcomes.get(d.item)] || 'transparent');
-            }
-
-            transition = transition
-                .transition()
-                .delay(this.durations.highlightToMove)
-                .duration(this.durations.move)
-                .style('transform', (d, i) => `translateY(${nextYs.get(d.item) - currentYs.get(d.item)}px)`);
-
-            if (this.params.colorAnimation) {
-                transition = transition
-                    .transition()
-                    .delay(this.durations.moveToFade)
-                    .duration(this.durations.fade)
-                    .style("background-color", 'transparent')
-            }
-
             let transitionsFinished = 0;
-            transition
+
+            this.cells
+                .transition()
+                .delay(animateOutcomes ? this.durations.outcomes : 0)
+                .duration(this.durations.move)
+                .style('transform', (cell, i) => `translateY(${nextYs.get(cell.result.item) - currentYs.get(cell.result.item)}px)`)
                 .each(() => ++transitionsFinished)
                 .on('end', () => {
                     if (!--transitionsFinished) {
                         this.table.remove();
-                        this.table = table.classed('hidden', false);
+                        this.table = table.attr('class', 'main');
                         this.rows = rows;
                         this.cells = cells;
                         resolve();
@@ -165,6 +153,9 @@ export default class {
         this.cells = this.rows.selectAll('td')
             .data(result => this.params.columns.map(column => makeCell(column, result, this.params)))
             .attr('class', cell => cell.classes.join(' '))
+            .style('background-color', cell => cell.column === 'outcome'
+                ? this.params.colors[cell.result.outcome] || 'transparent'
+                : 'transparent')
             .text(cell => cell.text);
     }
 
@@ -177,7 +168,7 @@ export default class {
         if (!move) {
             this.preview(this.currentRound);
         } else {
-            this.to(this.previewedRound);
+            this.to(this.previewedRound, { withoutAnimation: true });
         }
 
         this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
@@ -211,16 +202,16 @@ export default class {
                 this.pause();
             } else {
                 Promise.resolve(this.next())
-                    .then(playFunction);
+                    .then(() => setTimeout(playFunction, this.durations.freeze));
             }
         };
 
         if (this.currentRound === this.data.meta.lastRound) {
             Promise.resolve(this.first())
-                .then(playFunction)
+                .then(() => setTimeout(playFunction, this.durations.freeze))
         } else {
             Promise.resolve(this.next())
-                .then(playFunction)
+                .then(() => setTimeout(playFunction, this.durations.freeze))
         }
     }
 

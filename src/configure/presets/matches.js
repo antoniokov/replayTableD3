@@ -6,7 +6,7 @@ export default {
     },
     calculate: {},
     visualize: {
-        columns: ['position', 'item', 'points'],
-        labels: ['#', 'Team', 'Points']
+        columns: ['position', 'item', 'points', 'outcome'],
+        labels: ['#', 'Team', 'P', ' ']
     }
 };

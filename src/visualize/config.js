@@ -43,9 +43,9 @@ export default {
 
     colors: {
         default: {
-            'win': '#EDFFDF',
-            'draw': '#F3F3F3',
-            'loss': '#FFECEC'
+            'win': '#ACE680',
+            'draw': '#B3B3B3',
+            'loss': '#E68080'
         },
         parse: parseObject,
         validate: obj => validateObject(obj,

@@ -12,13 +12,13 @@ export default {
     },
 
     columns: {
-        default: ['position', 'item', 'points'],
+        default: ['position', 'item', 'points', 'outcome'],
         parse: input => input.split(','),
         validate: value => validateArray(value, isString)
     },
 
     labels: {
-        default: ['#', 'Team', 'Points'],
+        default: ['#', 'Team', 'Points', ''],
         parse: input => input.split(','),
         validate: value => validateArray(value, isString)
     },

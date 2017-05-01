@@ -7,26 +7,37 @@ export default function (column, result, params) {
     switch (column) {
         case 'position':
             return {
-                item: result.item,
+                column: 'position',
+                result: result,
                 text: formatPosition(result.position, params.positionWhenTied),
                 classes: ['position']
             };
         case 'item':
             return {
-                item: result.item,
+                column: 'item',
+                result: result,
                 text: result.item,
                 classes: ['item']
             };
+        case 'outcome':
+            return {
+                column: 'outcome',
+                result: result,
+                text: '',
+                classes: ['outcome']
+            };
         case 'winningPercentage':
             return {
-                item: result.item,
+                column: 'winningPercentage',
+                result: result,
                 text: result.winningPercentage.total.toFixed(3).toString().replace('0',''),
                 classes: ['calculation']
             };
         default:
             if (calculations.hasOwnProperty(column)) {
                 return {
-                    item: result.item,
+                    column: column,
+                    result: result,
                     text: result[column].total,
                     classes: ['calculation']
                 }
@@ -35,13 +46,15 @@ export default function (column, result, params) {
 
                 if (extraType) {
                     return {
-                        item: result.item,
+                        column: column,
+                        result: result,
                         text: result.extras[extraType][column],
                         classes: ['extra']
                     }
                 } else {
                     return {
-                        item: result.item,
+                        column: column,
+                        result: result,
                         text: '',
                         classes: []
                     }
