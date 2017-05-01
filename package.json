@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack -p && git add -A && git commit -m \"update build\" && git subtree push --branch gh-pages --prefix dist/",
+    "build": "webpack -p && git subtree split --branch gh-pages --prefix dist/",
     "start": "webpack-dev-server --port 8003"
   },
   "author": "",
