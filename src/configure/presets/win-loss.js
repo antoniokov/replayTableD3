@@ -13,6 +13,6 @@ export default {
     visualize: {
         visualizer: 'basic',
         columns: ['position', 'item', 'rounds', 'wins', 'losses', 'winningPercentage', 'outcome', 'match'],
-        labels: ['#', 'Team', 'G', 'W' , 'L', 'Win %', ' ', ' ']
+        labels: ['#', 'Team', 'G', 'W' , 'L', 'Win %']
     }
 };

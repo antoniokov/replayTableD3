@@ -84,7 +84,17 @@ export default class {
             .selectAll('th')
             .data(this.params.columns)
             .enter().append('th')
-            .text((column, i) => this.params.labels[i] || fromCamelCase(column));
+            .text((column, i) => {
+                if (this.params.labels[i]) {
+                    return this.params.labels[i];
+                }
+
+                if (column === 'outcome' || makeCell(column, {}, {}).classes.includes('change')) {
+                    return '';
+                }
+
+                return fromCamelCase(column);
+            });
 
         const rows = tbody.selectAll('tr')
             .data(this.data.results[roundNumber].results, k => k.item)

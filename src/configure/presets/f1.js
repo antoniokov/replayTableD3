@@ -11,7 +11,7 @@ export default {
         orderBy: ['points', 'wins']
     },
     visualize: {
-        columns: ['position', 'item', 'points'],
+        columns: ['position', 'item', 'points', 'points.change'],
         labels: ['#', 'Driver', 'Points']
     }
 };
