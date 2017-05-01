@@ -5,83 +5,53 @@ import mapParamToModule from '../../configure/helpers/map-param-to-module';
 
 
 export default function (column, result, params) {
+    const cell = {
+        column: column,
+        result: result
+    };
+
     switch (column) {
         case 'position':
-            return {
-                column: 'position',
-                result: result,
-                text: formatPosition(result.position, params.positionWhenTied),
-                classes: ['position']
-            };
+            cell.text = formatPosition(result.position, params.positionWhenTied);
+            cell.classes = ['position'];
+            return cell;
         case 'item':
-            return {
-                column: 'item',
-                result: result,
-                text: result.item,
-                classes: ['item']
-            };
+            cell.text = result.item;
+            cell.classes = ['item'];
+            return cell;
         case 'outcome':
-            return {
-                column: 'outcome',
-                result: result,
-                text: '',
-                classes: ['outcome']
-            };
-        case 'points.change':
-            return {
-                column: 'points.change',
-                result: result,
-                text: numberToChange(result.points.change),
-                classes: ['change']
-            };
+            cell.text = '';
+            cell.classes = ['outcome'];
+            cell.backgroundColor = params.colors[result.outcome] || 'transparent';
+            return cell;
         case 'match':
-            return {
-                column: 'match',
-                result: result,
-                text: result.match ? `${result.match.score}-${result.match.opponentScore} ${result.match.opponent}` : '',
-                classes: ['change']
-            };
+            cell.text = result.match ? `${result.match.score}-${result.match.opponentScore} ${result.match.opponent}` : '';
+            cell.classes = ['change'];
+            return cell;
         case 'winningPercentage':
-            return {
-                column: 'winningPercentage',
-                result: result,
-                text: result.winningPercentage.total.toFixed(3).toString().replace('0',''),
-                classes: ['calculation']
-            };
+            cell.text = result.winningPercentage.total.toFixed(3).toString().replace('0','');
+            cell.classes = ['calculation'];
+            return cell;
         default:
             if (calculations.hasOwnProperty(column)) {
-                return {
-                    column: column,
-                    result: result,
-                    text: result[column].total,
-                    classes: ['calculation']
-                };
+                cell.text = result[column].total;
+                cell.classes = ['calculation'];
             } else if (column.includes('.change')) {
                 const calc = column.replace('.change', '');
-                return {
-                    column: column,
-                    result: result,
-                    text: result[calc].change,
-                    classes: ['change']
-                };
+                cell.text = numberToChange(result[calc].change);
+                cell.classes = ['change'];
             } else {
                 const extraType = mapParamToModule(column, result.extras);
 
                 if (extraType) {
-                    return {
-                        column: column,
-                        result: result,
-                        text: result.extras[extraType][column],
-                        classes: ['extra']
-                    };
+                    cell.text = result.extras[extraType][column];
+                    cell.classes = ['extra'];
                 } else {
-                    return {
-                        column: column,
-                        result: result,
-                        text: '',
-                        classes: []
-                    };
+                    cell.text = '';
+                    cell.classes = [];
                 }
             }
+
+            return cell;
     }
 };

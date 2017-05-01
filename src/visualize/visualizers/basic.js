@@ -93,9 +93,7 @@ export default class {
             .data(result => this.params.columns.map(column => makeCell(column, result, this.params)))
             .enter().append('td')
             .attr('class', cell => cell.classes.join(' '))
-            .style('background-color', cell => cell.column === 'outcome'
-                ? this.params.colors[cell.result.outcome] || 'transparent'
-                : 'transparent')
+            .style('background-color', cell => cell.backgroundColor || 'transparent')
             .text(cell => cell.text);
 
         return [table, rows, cells];
@@ -155,9 +153,7 @@ export default class {
         this.cells = this.rows.selectAll('td')
             .data(result => this.params.columns.map(column => makeCell(column, result, this.params)))
             .attr('class', cell => cell.classes.join(' '))
-            .style('background-color', cell => cell.column === 'outcome'
-                ? this.params.colors[cell.result.outcome] || 'transparent'
-                : 'transparent')
+            .style('background-color', cell => cell.backgroundColor || 'transparent')
             .text(cell => cell.text);
     }
 
