@@ -1,4 +1,5 @@
 import * as Controls from '../controls';
+import getRowsYs from '../helpers/get-rows-ys';
 import makeCell from '../helpers/make-cell';
 import fromCamelCase from '../../helpers/general/from-camel-case';
 import toCamelCase from '../../helpers/general/to-camel-case';
@@ -99,16 +100,33 @@ export default class {
         return [table, rows, cells];
     }
 
-    getItemsYs (rows) {
-        return new Map(rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
+    move (roundIndex, delay, duration) {
+        return new Promise((resolve, reject) => {
+            let transitionsFinished = 0;
+            const [table, rows, cells] = this.renderTable(roundIndex, false);
+            const currentYs = getRowsYs(this.rows);
+            const nextYs = getRowsYs(rows);
+
+            this.cells
+                .transition()
+                .delay(delay)
+                .duration(duration)
+                .style('transform', (cell, i) => `translateY(${nextYs.get(cell.result.item) - currentYs.get(cell.result.item)}px)`)
+                .each(() => ++transitionsFinished)
+                .on('end', () => {
+                    if (!--transitionsFinished) {
+                        this.table.remove();
+                        this.table = table.attr('class', 'main');
+                        this.rows = rows;
+                        this.cells = cells;
+                        resolve();
+                    }
+                });
+        });
     }
 
-    to (roundIndex, options = {}) {
+    to (roundIndex) {
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
-
-        const [table, rows, cells] = this.renderTable(roundIndex, false);
-        const currentYs = this.getItemsYs(this.rows);
-        const nextYs = this.getItemsYs(rows);
 
         const newResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
 
@@ -123,25 +141,7 @@ export default class {
         d3.selectAll(`${this.selector} table.main td.change`)
             .text(cell => makeCell(cell.column, newResults.get(cell.result.item), this.params).text);
 
-        return new Promise((resolve, reject) => {
-            let transitionsFinished = 0;
-
-            this.cells
-                .transition()
-                .delay(animateOutcomes ? this.durations.outcomes : 0)
-                .duration(this.durations.move)
-                .style('transform', (cell, i) => `translateY(${nextYs.get(cell.result.item) - currentYs.get(cell.result.item)}px)`)
-                .each(() => ++transitionsFinished)
-                .on('end', () => {
-                    if (!--transitionsFinished) {
-                        this.table.remove();
-                        this.table = table.attr('class', 'main');
-                        this.rows = rows;
-                        this.cells = cells;
-                        resolve();
-                    }
-                });
-        });
+        return this.move(roundIndex, animateOutcomes ? this.durations.outcomes : 0, this.durations.move);
     }
 
     preview (roundIndex) {
@@ -166,7 +166,7 @@ export default class {
         if (!move) {
             this.preview(this.currentRound);
         } else {
-            this.to(this.previewedRound, { withoutAnimation: true });
+            this.to(this.previewedRound);
         }
 
         this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
