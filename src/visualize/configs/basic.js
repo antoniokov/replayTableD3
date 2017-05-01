@@ -21,5 +21,11 @@ export default {
         default: ['#', 'Team', 'Points'],
         parse: input => input.split(','),
         validate: value => validateArray(value, isString)
+    },
+
+    colorAnimation: {
+        default: false,
+        parse: input => input === "true",
+        validate: typeof value === 'boolean'
     }
 };

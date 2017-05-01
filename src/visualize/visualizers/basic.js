@@ -37,6 +37,8 @@ export default class {
 
         this.dispatch = d3.dispatch(...dispatchers);
 
+        this.dispatch.on('roundChange', roundMeta => this.currentRound = roundMeta.index);
+
         this.dispatch.on('play', () => this.isPlaying = true);
         this.dispatch.on('pause', () => this.isPlaying = false);
 
@@ -112,28 +114,35 @@ export default class {
         const currentYs = this.getItemsYs(this.rows);
         const nextYs = this.getItemsYs(rows);
 
-        //const outcomes = new Map(this.data.results[roundIndex].results.map(result => [result.item, result.outcome]));
-
-        let transitionsFinished = 0;
+        const outcomes = new Map(this.data.results[roundIndex].results.map(result => [result.item, result.outcome]));
 
 
         return new Promise((resolve, reject) => {
-            this.cells
-                /*
-                .transition()
-                .duration(this.durations.highlight)
-                .style("background-color", d => this.params.colors[outcomes.get(d.item)] || 'transparent')
-                */
+            let transition = this.cells;
+
+            if (this.params.colorAnimation) {
+                transition = this.cells
+                    .transition()
+                    .duration(this.durations.highlight)
+                    .style("background-color", d => this.params.colors[outcomes.get(d.item)] || 'transparent');
+            }
+
+            transition = transition
                 .transition()
                 .delay(this.durations.highlightToMove)
                 .duration(this.durations.move)
-                .style('transform', (d, i) => `translateY(${nextYs.get(d.item) - currentYs.get(d.item)}px)`)
-                /*
-                .transition()
-                .delay(this.durations.moveToFade)
-                .duration(this.durations.fade)
-                .style("background-color", 'transparent')
-                */
+                .style('transform', (d, i) => `translateY(${nextYs.get(d.item) - currentYs.get(d.item)}px)`);
+
+            if (this.params.colorAnimation) {
+                transition = transition
+                    .transition()
+                    .delay(this.durations.moveToFade)
+                    .duration(this.durations.fade)
+                    .style("background-color", 'transparent')
+            }
+
+            let transitionsFinished = 0;
+            transition
                 .each(() => ++transitionsFinished)
                 .on('end', () => {
                     if (!--transitionsFinished) {
@@ -141,10 +150,9 @@ export default class {
                         this.table = table.classed('hidden', false);
                         this.rows = rows;
                         this.cells = cells;
-                        this.currentRound = roundIndex;
                         resolve();
                     }
-                })
+                });
         });
     }
 
