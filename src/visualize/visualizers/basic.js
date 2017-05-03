@@ -43,6 +43,10 @@ export default class {
 
         this.selector = params.id ? `#${params.id}` : '.replayTable';
         this.renderControls(this.params.controls);
+
+        d3.select(this.selector)
+            .append('div')
+            .attr('class', 'table-container');
         [this.table, this.rows, this.cells] = this.renderTable(this.currentRound);
     }
 
@@ -74,7 +78,8 @@ export default class {
     }
 
     renderTable (roundNumber, isVisible = true) {
-        const table = d3.select(this.selector).append('table')
+        const table = d3.select(`${this.selector} .table-container`)
+            .append('table')
             .attr('class', () => isVisible ? 'main' : 'hidden');
 
         const thead = table.append('thead');
