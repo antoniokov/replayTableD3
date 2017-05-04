@@ -43,6 +43,11 @@ export default {
         calculate: result => result.match ? result.match.opponentScore : 0
     },
 
+    'goalsDifference': {
+        check: checkingFunctions.hasMatches,
+        calculate: result => result.match ? result.match.score - result.match.opponentScore : 0
+    },
+
 
     'winningPercentage': {
         check: checkingFunctions.hasOutcome('win'),

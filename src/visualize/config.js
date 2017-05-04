@@ -12,7 +12,7 @@ export default {
     },
 
     visualizer: {
-        default: 'basic',
+        default: 'classic',
         parse: input => input,
         validate: value => visualizers.hasOwnProperty(value)
     },

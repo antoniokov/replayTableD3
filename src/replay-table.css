@@ -11,19 +11,19 @@ h1 {
 .replayTable{
 	position: relative;
 }
-.replayTable > .controls{}
-.replayTable > .controls > div{
+.replayTable > .controls-container > .controls{}
+.replayTable > .controls-container > .controls > div{
 	display: inline-block;
 	vertical-align: middle;
 	margin-right: 5px;
 	position: relative;
 	cursor: pointer;
 }
-.replayTable > .controls > div.disabled{
+.replayTable > .controls-container > .controls > div.disabled{
 	opacity: 0.5;
 	cursor: not-allowed;
 }
-.replayTable > .controls > .play {
+.replayTable > .controls-container > .controls > .play {
 	width: 14px;
 	height: 14px;
 	-webkit-box-sizing: border-box;
@@ -38,11 +38,11 @@ h1 {
 	border-radius: 2px;
 }
 
-.replayTable > .controls > .pause {
+.replayTable > .controls-container > .controls > .pause {
 	width: 14px;
 	height: 14px;
 }
-.replayTable > .controls > .pause:before{
+.replayTable > .controls-container > .controls > .pause:before{
 	content: '';
 	display: block;
 	position: absolute;
@@ -55,7 +55,7 @@ h1 {
 	-moz-border-radius: 2px;
 	border-radius: 2px;
 }
-.replayTable > .controls > .pause:after{
+.replayTable > .controls-container > .controls > .pause:after{
 	content: '';
 	display: block;
 	position: absolute;
@@ -69,7 +69,7 @@ h1 {
 	border-radius: 2px;
 }
 
-.replayTable > .controls > .replay {
+.replayTable > .controls-container > .controls > .replay {
 	width: 10px;
 	height: 10px;
 	border: 2px solid #000;
@@ -78,7 +78,7 @@ h1 {
 	-moz-border-radius: 20px;
 	border-radius: 20px;
 }
-.replayTable > .controls > .replay:before{
+.replayTable > .controls-container > .controls > .replay:before{
 	content: '';
 	display: block;
 	position: absolute;
@@ -93,7 +93,7 @@ h1 {
 	-o-transform: rotate(-45deg);
 	transform: rotate(-45deg);
 }
-.replayTable > .controls > .replay:after{
+.replayTable > .controls-container > .controls > .replay:after{
 	content: '';
 	display: block;
 	position: absolute;
@@ -109,14 +109,14 @@ h1 {
 }
 
 
-.replayTable > .controls > .previous ,
-.replayTable > .controls > .next{
+.replayTable > .controls-container > .controls > .previous ,
+.replayTable > .controls-container > .controls > .next{
 	width: 14px;
 	height: 14px;
 }
 
-.replayTable > .controls > .previous:before  ,
-.replayTable > .controls > .next:before {
+.replayTable > .controls-container > .controls > .previous:before  ,
+.replayTable > .controls-container > .controls > .next:before {
 	content: '';
 	position: absolute;
 	display: block;
@@ -126,7 +126,7 @@ h1 {
 	border-right: 2px solid #000;
 	border-top: 2px solid #000;
 }
-.replayTable > .controls > .previous:before {
+.replayTable > .controls-container > .controls > .previous:before {
 	left: 5px;
 
 	-webkit-transform: rotate(-135deg);
@@ -135,7 +135,7 @@ h1 {
 	-o-transform: rotate(-135deg);
 	transform: rotate(-135deg);
 }
-.replayTable > .controls > .next:before {
+.replayTable > .controls-container > .controls > .next:before {
 	right: 5px;
 	-webkit-transform: rotate(45deg);
 	-moz-transform: rotate(45deg);
@@ -152,7 +152,7 @@ h1 {
 	top: 50px;
 }
 
-.replayTable table.hidden {
+.replayTable .hidden {
 	visibility: hidden;
 }
 

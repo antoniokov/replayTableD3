@@ -11,7 +11,7 @@ export default {
         orderBy: ['winningPercentage', 'wins']
     },
     visualize: {
-        visualizer: 'basic',
+        visualizer: 'classic',
         columns: ['position', 'item', 'rounds', 'wins', 'losses', 'winningPercentage', 'outcome', 'match'],
         labels: ['#', 'Team', 'G', 'W' , 'L', 'Win %']
     }

@@ -17,7 +17,7 @@ export default function (column, result, params) {
             return cell;
         case 'item':
             cell.text = result.item;
-            cell.classes = ['item'];
+            cell.classes = ['item', 'clickable'];
             return cell;
         case 'outcome':
             cell.text = '';
@@ -28,9 +28,17 @@ export default function (column, result, params) {
             cell.text = result.match ? `${result.match.score}-${result.match.opponentScore} ${result.match.opponent}` : '';
             cell.classes = ['change'];
             return cell;
+        case 'goalsDifference':
+            cell.text = numberToChange(result.goalsDifference.total, '0');
+            cell.classes = ['calculation'];
+            return cell;
         case 'winningPercentage':
             cell.text = result.winningPercentage.total.toFixed(3).toString().replace('0','');
             cell.classes = ['calculation'];
+            return cell;
+        case 'round':
+            cell.text = result.roundMeta.name;
+            cell.classes = ['round', 'clickable'];
             return cell;
         default:
             if (calculations.hasOwnProperty(column)) {
