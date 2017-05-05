@@ -257,11 +257,11 @@ export default class {
         this.drilldown.controls = this.controlsContainer.append('div')
             .attr('class', 'drilldown-contorls');
         this.drilldown.controls.append('div')
-            .attr('class', 'drilldown drilldown-back')
+            .attr('class', 'back')
             .text('<-')
             .on('click', this.endDrillDown.bind(this));
         this.drilldown.controls.append('div')
-            .attr('class', 'drilldown drilldown-item')
+            .attr('class', 'item')
             .text(item);
 
         const columns = ['round'];
