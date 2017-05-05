@@ -10,11 +10,27 @@ h1 {
 
 .replayTable{
 	position: relative;
+
+	float: left;
+	clear: both;
+
+	margin-bottom: 50px;
+}
+
+
+
+
+
+/* CONTROLS ----------------------------------------------------------------------
+----------------------------------------------------------------------------------------- */
+
+.replayTable > .controls-container{
+	margin-bottom: 30px;
 }
 .replayTable > .controls-container > .controls{}
 .replayTable > .controls-container > .controls > div{
 	display: inline-block;
-	vertical-align: middle;
+	vertical-align: bottom;
 	margin-right: 5px;
 	position: relative;
 	cursor: pointer;
@@ -145,25 +161,15 @@ h1 {
 }
 
 
-
-.replayTable table {
-	position: absolute;
-	left: 0;
-	top: 50px;
-}
-
-.replayTable .hidden {
-	visibility: hidden;
-}
-
-
-
 /* SLIDER ----------------------------------------------------------------------
 ----------------------------------------------------------------------------------------- */
 
 .replayTable .slider{
 	display: inline-block;
-	width: 120px;
+	width: -webkit-calc(100% - 65px);
+	width: calc(100% - 65px);
+
+	min-width: 230px;
 	position: relative;
 	height: 1px;
 	background: rgba(0,0,0,0.1);
@@ -175,7 +181,7 @@ h1 {
 	height: 16px;
 	background: #fff;
 	border: 1px solid #999;
-    border-bottom: none;
+	border-bottom: none;
 	top: -24px;
 	margin-left: -8px;
 	cursor: pointer;
@@ -185,35 +191,35 @@ h1 {
 	line-height: 17px;
 	font-size: 10px;
 	color: #000;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 .replayTable .slider .slider-toggle:before{
-    content: '';
-    position: absolute;
-    bottom: -7px;
-    left: -1px;
-    border-width: 8px 9px 0;
-    border-style: solid;
-    border-color: #fff transparent;
-    display: block;
-    width: 0;
-    z-index: 2;
+	content: '';
+	position: absolute;
+	bottom: -7px;
+	left: -1px;
+	border-width: 8px 9px 0;
+	border-style: solid;
+	border-color: #fff transparent;
+	display: block;
+	width: 0;
+	z-index: 2;
 }
 .replayTable .slider .slider-toggle:after{
-	 content: '';
-	 position: absolute;
-	 bottom: -8px;
-	 left: -1px;
-	 border-width: 8px 9px 0;
-	 border-style: solid;
-	 border-color: #999 transparent;
-	 display: block;
-	 width: 0;
+	content: '';
+	position: absolute;
+	bottom: -8px;
+	left: -1px;
+	border-width: 8px 9px 0;
+	border-style: solid;
+	border-color: #999 transparent;
+	display: block;
+	width: 0;
 
- }
+}
 .replayTable .slider .slider-available{
 	position: absolute;
 	display: block;
@@ -232,6 +238,56 @@ h1 {
 }
 
 
+
+
+/* drilldown-contorls ----------------------------------------------------------------------
+----------------------------------------------------------------------------------------- */
+
+.drilldown-contorls{}
+.drilldown-contorls{}
+.drilldown-contorls{}
+.drilldown-contorls{}
+
+
+/* CONTAINER ----------------------------------------------------------------------
+----------------------------------------------------------------------------------------- */
+
+.replayTable  .table-container{
+	position: relative;
+}
+.replayTable  .table-container table {
+	position: relative;
+	left: 0;
+	top: 0;
+}
+.replayTable  .table-container table + table{
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+.replayTable .hidden {
+	visibility: hidden;
+}
+.replayTable th{
+	text-align: left;
+	text-transform: uppercase;
+	font-size: 12px;
+	padding-bottom: 5px;
+	border-bottom: 1px dotted rgba(0,0,0,0.1);
+}
+.replayTable td{
+	padding: 3px 5px;
+	font-size: 14px;
+}
+.replayTable .clickable{
+	cursor: pointer;
+}
+.replayTable .clickable:hover{
+	text-decoration: underline;
+}
+.replayTable .calculation{
+	text-align: center;
+}
 
 .replayTable td.outcome {
 	width: 5px;
