@@ -27,7 +27,7 @@ export default class {
 
         this.currentRound = params.startFromRound || this.data.meta.lastRound;
         this.previewedRound = null;
-        this.drillDownedItem = null;
+        this.drillDown = {};
 
         this.dispatch = d3.dispatch(...dispatchers);
         this.dispatch.on('roundChange', roundMeta => this.currentRound = roundMeta.index);
@@ -35,8 +35,8 @@ export default class {
         this.dispatch.on('pause', () => this.isPlaying = false);
         this.dispatch.on('roundPreview', roundMeta => this.previewedRound = roundMeta.index);
         this.dispatch.on('endPreview', roundMeta => this.previewedRound = null);
-        this.dispatch.on('drillDown', item => this.drillDownedItem = item);
-        this.dispatch.on('endDrillDown', item => this.drillDownedItem = null);
+        this.dispatch.on('drillDown', item => this.drillDown.item = item);
+        this.dispatch.on('endDrillDown', item => this.drillDown = {});
 
         this.selector = params.id ? `#${params.id}` : '.replayTable';
 
@@ -157,18 +157,18 @@ export default class {
 
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
-        const newResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
+        const nextRoundResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
 
         const animateOutcomes = this.params.columns.includes('outcome');
         if (animateOutcomes) {
             this.table.selectAll('td.outcome')
                 .transition()
                 .duration(this.durations.outcomes)
-                .style("background-color", cell => this.params.colors[newResults.get(cell.result.item).outcome] || 'transparent');
+                .style("background-color", cell => this.params.colors[nextRoundResults.get(cell.result.item).outcome] || 'transparent');
         }
 
         this.table.selectAll('td.change')
-            .text(cell => makeCell(cell.column, newResults.get(cell.result.item), this.params).text);
+            .text(cell => makeCell(cell.column, nextRoundResults.get(cell.result.item), this.params).text);
 
         return this.move(roundIndex, animateOutcomes ? this.durations.outcomes : 0, this.durations.move);
     }
@@ -184,21 +184,25 @@ export default class {
             .attr('class', cell => cell.classes.join(' '))
             .style('background-color', cell => cell.backgroundColor || 'transparent')
             .text(cell => cell.text);
+
+        return Promise.resolve();
     }
 
     endPreview (move = false) {
-        if (this.previewedRound === null || this.previewedRound === this.currentRound) {
+        const end = () => {
             this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
-            return;
-        }
+            return Promise.resolve();
+        };
 
-        if (!move) {
-            this.preview(this.currentRound);
+        if (this.previewedRound === null || this.previewedRound === this.currentRound) {
+            return end();
+        } else if (!move) {
+            return Promise.resolve(this.preview(this.currentRound))
+                .then(end);
         } else {
-            this.to(this.previewedRound);
+            return Promise.resolve(this.to(this.previewedRound))
+                .then(end);
         }
-
-        this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
     }
 
     first () {
@@ -249,26 +253,16 @@ export default class {
     drillDownToItem (item) {
         this.dispatch.call('drillDown', this, item);
 
-        const itemResults = this.data.results.slice(1).map(round => {
-            const result = round.results.filter(result => result.item === item)[0];
-            return Object.assign({}, result, { roundMeta: round.meta });
-        });
-
         this.controls.classed('hidden', true);
-        this.drillDownControls = this.controlsContainer.append('div')
+        this.drillDown.controls = this.controlsContainer.append('div')
             .attr('class', 'drilldown-contorls');
-
-        this.drillDownControls.append('div')
+        this.drillDown.controls.append('div')
             .attr('class', 'drilldown drilldown-back')
             .text('<-')
             .on('click', this.endDrillDown.bind(this));
-        this.drillDownControls.append('div')
+        this.drillDown.controls.append('div')
             .attr('class', 'drilldown drilldown-item')
             .text(item);
-
-        this.table.attr('class', 'hidden');
-        this.drillDownTable = this.tableContainer.append('table')
-            .attr('class', 'drilldown');
 
         const columns = ['round'];
         const labels = [''];
@@ -278,33 +272,35 @@ export default class {
                 labels.push(this.params.labels[i] || '');
             }
         });
-        const header = this.renderHeader(this.drillDownTable, columns, labels);
 
-        const tbody = this.drillDownTable.append('tbody');
-        this.drillDownRows = tbody.selectAll('tr')
-            .data(itemResults, k => k.meta.index)
-            .enter().append('tr');
+        const itemData = this.data.results.slice(1).map(round => {
+            const result = round.results.filter(result => result.item === item)[0];
+            return Object.assign({}, result, { roundMeta: round.meta });
+        });
 
-        this.drillDownCells = this.drillDownRows.selectAll('td')
-            .data(round => columns.map(column => makeCell(column, Object.assign({ roundMeta: round.meta }, round.result), this.params)))
-            .enter().append('td')
-            .attr('class', cell => cell.classes.join(' '))
-            .style('background-color', cell => cell.backgroundColor || 'transparent')
-            .text(cell => cell.text)
-            .on('click', cell => cell.column === 'round' ? this.endDrillDown(cell.result.roundMeta.index) : null);
+        this.table.classed('hidden', true);
+        [this.drillDown.table, this.drillDown.rows, this.drillDown.cells] = this.renderTable(itemData, 'drilldown', columns, labels);
+
+        return Promise.resolve();
     }
 
     endDrillDown (roundIndex = null) {
-        this.dispatch.call('endDrillDown', this, roundIndex);
+        const end = () => {
+            this.dispatch.call('endDrillDown', this, roundIndex);
+            return Promise.resolve();
+        };
 
-        this.drillDownControls.remove();
+        this.drillDown.controls.remove();
         this.controls.classed('hidden', false);
 
-        this.drillDownTable.remove();
-        this.table.attr('class', 'main');
+        this.drillDown.table.remove();
+        this.table.classed('hidden', false);
 
         if (roundIndex !== null) {
-            this.to(roundIndex);
+            return Promise.resolve(this.to(roundIndex))
+                .then(end);
+        } else {
+            end();
         }
     }
 };
