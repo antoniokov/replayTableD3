@@ -20,14 +20,14 @@ export default class {
         this.next = this.next.bind(this);
         this.preview = this.preview.bind(this);
         this.endPreview = this.endPreview.bind(this);
-        this.drillDownToItem = this.drillDownToItem.bind(this);
+        this.drillDown = this.drillDown.bind(this);
         this.endDrillDown = this.endDrillDown.bind(this);
 
         this.durations = adjustDurations(params.durations, params.speed);
 
         this.currentRound = params.startFromRound || this.data.meta.lastRound;
         this.previewedRound = null;
-        this.drillDown = {};
+        this.drilldown = {};
 
         this.dispatch = d3.dispatch(...dispatchers);
         this.dispatch.on('roundChange', roundMeta => this.currentRound = roundMeta.index);
@@ -35,8 +35,8 @@ export default class {
         this.dispatch.on('pause', () => this.isPlaying = false);
         this.dispatch.on('roundPreview', roundMeta => this.previewedRound = roundMeta.index);
         this.dispatch.on('endPreview', roundMeta => this.previewedRound = null);
-        this.dispatch.on('drillDown', item => this.drillDown.item = item);
-        this.dispatch.on('endDrillDown', item => this.drillDown = {});
+        this.dispatch.on('drillDown', item => this.drilldown.item = item);
+        this.dispatch.on('endDrillDown', item => this.drilldown = {});
 
         this.selector = params.id ? `#${params.id}` : '.replayTable';
 
@@ -114,7 +114,7 @@ export default class {
             .on('click', cell => {
                 switch(cell.column) {
                     case 'item':
-                        return this.drillDownToItem(cell.result.item);
+                        return this.drillDown(cell.result.item);
                     case 'round':
                         return this.endDrillDown(cell.result.roundMeta.index);
                     default:
@@ -250,17 +250,17 @@ export default class {
         this.dispatch.call('pause');
     }
 
-    drillDownToItem (item) {
+    drillDown (item) {
         this.dispatch.call('drillDown', this, item);
 
         this.controls.classed('hidden', true);
-        this.drillDown.controls = this.controlsContainer.append('div')
+        this.drilldown.controls = this.controlsContainer.append('div')
             .attr('class', 'drilldown-contorls');
-        this.drillDown.controls.append('div')
+        this.drilldown.controls.append('div')
             .attr('class', 'drilldown drilldown-back')
             .text('<-')
             .on('click', this.endDrillDown.bind(this));
-        this.drillDown.controls.append('div')
+        this.drilldown.controls.append('div')
             .attr('class', 'drilldown drilldown-item')
             .text(item);
 
@@ -279,7 +279,7 @@ export default class {
         });
 
         this.table.classed('hidden', true);
-        [this.drillDown.table, this.drillDown.rows, this.drillDown.cells] = this.renderTable(itemData, 'drilldown', columns, labels);
+        [this.drilldown.table, this.drilldown.rows, this.drilldown.cells] = this.renderTable(itemData, 'drilldown', columns, labels);
 
         return Promise.resolve();
     }
@@ -290,10 +290,10 @@ export default class {
             return Promise.resolve();
         };
 
-        this.drillDown.controls.remove();
+        this.drilldown.controls.remove();
         this.controls.classed('hidden', false);
 
-        this.drillDown.table.remove();
+        this.drilldown.table.remove();
         this.table.classed('hidden', false);
 
         if (roundIndex !== null) {
