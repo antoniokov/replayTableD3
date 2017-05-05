@@ -1,4 +1,5 @@
 import * as Controls from '../controls';
+import adjustDurations from '../helpers/adjust-durations';
 import getRowsYs from '../helpers/get-rows-ys';
 import makeCell from '../helpers/make-cell';
 import fromCamelCase from '../../helpers/general/from-camel-case';
@@ -6,11 +7,6 @@ import toCamelCase from '../../helpers/general/to-camel-case';
 
 
 const dispatchers = ['roundChange', 'play', 'pause', 'roundPreview', 'endPreview', 'drillDown', 'endDrillDown'];
-const durations = {
-    move: 750,
-    freeze: 750,
-    outcomes: 200
-};
 
 
 export default class {
@@ -24,37 +20,39 @@ export default class {
         this.next = this.next.bind(this);
         this.preview = this.preview.bind(this);
         this.endPreview = this.endPreview.bind(this);
+        this.drillDownToItem = this.drillDownToItem.bind(this);
+        this.endDrillDown = this.endDrillDown.bind(this);
 
-        this.durations = Object.keys(durations).reduce((obj, key) =>
-            Object.assign(obj, { [key]: durations[key]/params.speed }), {});
+        this.durations = adjustDurations(params.durations, params.speed);
 
-        this.currentRound = this.params.startFromRound ? this.params.startFromRound : this.data.meta.lastRound;
+        this.currentRound = params.startFromRound || this.data.meta.lastRound;
         this.previewedRound = null;
+        this.drillDownedItem = null;
 
         this.dispatch = d3.dispatch(...dispatchers);
-
         this.dispatch.on('roundChange', roundMeta => this.currentRound = roundMeta.index);
-
         this.dispatch.on('play', () => this.isPlaying = true);
         this.dispatch.on('pause', () => this.isPlaying = false);
-
         this.dispatch.on('roundPreview', roundMeta => this.previewedRound = roundMeta.index);
         this.dispatch.on('endPreview', roundMeta => this.previewedRound = null);
+        this.dispatch.on('drillDown', item => this.drillDownedItem = item);
+        this.dispatch.on('endDrillDown', item => this.drillDownedItem = null);
 
         this.selector = params.id ? `#${params.id}` : '.replayTable';
+
         this.controlsContainer = d3.select(this.selector)
             .append('div')
             .attr('class', 'controls-container');
+        this.controls = this.renderControls(this.controlsContainer, this.params.controls);
+
         this.tableContainer = d3.select(this.selector)
             .append('div')
             .attr('class', 'table-container');
-
-        this.renderControls(this.params.controls);
-        [this.table, this.rows, this.cells] = this.renderTable(this.currentRound);
+        [this.table, this.rows, this.cells] = this.renderTable(this.data.results[this.currentRound].results);
     }
 
-    renderControls(controls) {
-        this.controls = this.controlsContainer.append('div')
+    renderControls(container, list) {
+        const controls = container.append('div')
             .attr('class', 'controls');
 
         const roundMeta = this.data.results[this.currentRound].meta;
@@ -62,12 +60,12 @@ export default class {
 
         const controlsObject = {};
         const args = {
-            play: [this.controls, roundMeta, this.play, this.pause],
-            previous: [this.controls, roundMeta, this.previous],
-            next: [this.controls, roundMeta, this.next],
-            slider: [this.controls, this.data.meta.lastRound, roundsTotalNumber, roundMeta, this.preview, this.endPreview]
+            play: [controls, roundMeta, this.play, this.pause],
+            previous: [controls, roundMeta, this.previous],
+            next: [controls, roundMeta, this.next],
+            slider: [controls, this.data.meta.lastRound, roundsTotalNumber, roundMeta, this.preview, this.endPreview]
         };
-        controls.forEach(control => controlsObject[control] = new Controls[control](...args[control]));
+        list.forEach(control => controlsObject[control] = new Controls[control](...args[control]));
 
         Object.keys(controlsObject).forEach(ctrl => {
             const control = controlsObject[ctrl];
@@ -79,58 +77,61 @@ export default class {
             });
         });
 
-        return this.controls;
+        return controls;
     }
 
-    renderHeader (table, columns, labels) {
-        const thead = table.append('thead');
+    renderTable (data, className = 'main', columns = this.params.columns, labels = this.params.labels) {
+        const table = this.tableContainer
+            .append('table')
+            .attr('class', className);
 
-        const sampleResult = this.data.results[1].results[0];
-        return thead.append('tr')
+        const thead = table.append('thead');
+        thead.append('tr')
             .selectAll('th')
             .data(columns)
             .enter().append('th')
             .text((column, i) => {
                 if (labels[i]) {
                     return labels[i];
-                } else if (['outcome', 'round'].includes(column) || makeCell(column, sampleResult, this.params).classes.includes('change')) {
+                } else if (['outcome', 'match', 'round'].includes(column) || column.includes('.change')) {
                     return '';
                 } else {
                     return fromCamelCase(column);
                 }
             });
-    }
-
-    renderTable (roundNumber, isVisible = true) {
-        const table = this.tableContainer
-            .append('table')
-            .attr('class', () => isVisible ? 'main' : 'hidden');
-
-        const header = this.renderHeader(table, this.params.columns, this.params.labels);
 
         const tbody = table.append('tbody');
         const rows = tbody.selectAll('tr')
-            .data(this.data.results[roundNumber].results, k => k.item)
+            .data(data, k => k.item || k.roundMeta.index)
             .enter().append('tr');
 
         const cells = rows.selectAll('td')
-            .data(result => this.params.columns.map(column => makeCell(column, result, this.params)))
+            .data(result => columns.map(column => makeCell(column, result, this.params)))
             .enter().append('td')
             .attr('class', cell => cell.classes.join(' '))
             .style('background-color', cell => cell.backgroundColor || 'transparent')
             .text(cell => cell.text)
-            .on('click', cell => cell.column === 'item' ? this.drillDownToItem(cell.result.item) : null);
+            .on('click', cell => {
+                switch(cell.column) {
+                    case 'item':
+                        return this.drillDownToItem(cell.result.item);
+                    case 'round':
+                        return this.endDrillDown(cell.result.roundMeta.index);
+                    default:
+                        return null;
+                }
+            });
 
         return [table, rows, cells];
     }
 
     move (roundIndex, delay, duration) {
+        const [table, rows, cells] = this.renderTable(this.data.results[roundIndex].results, 'hidden');
+        const currentYs = getRowsYs(this.rows);
+        const nextYs = getRowsYs(rows);
+
         return new Promise((resolve, reject) => {
             let transitionsFinished = 0;
-            const [table, rows, cells] = this.renderTable(roundIndex, false);
-            const currentYs = getRowsYs(this.rows);
-            const nextYs = getRowsYs(rows);
-
             this.cells
                 .transition()
                 .delay(delay)
@@ -248,10 +249,10 @@ export default class {
     drillDownToItem (item) {
         this.dispatch.call('drillDown', this, item);
 
-        const itemResults = this.data.results.slice(1).map(round => ({
-            meta: round.meta,
-            result: round.results.filter(result => result.item === item)[0]
-        }));
+        const itemResults = this.data.results.slice(1).map(round => {
+            const result = round.results.filter(result => result.item === item)[0];
+            return Object.assign({}, result, { roundMeta: round.meta });
+        });
 
         this.controls.classed('hidden', true);
         this.drillDownControls = this.controlsContainer.append('div')

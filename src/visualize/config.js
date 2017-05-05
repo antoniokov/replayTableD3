@@ -41,6 +41,18 @@ export default {
         validate: value => !Number.isNaN(value) && value > 0.0 && value <= 10.0
     },
 
+    durations: {
+        default: {
+            move: 750,
+            freeze: 750,
+            outcomes: 200
+        },
+        parse: parseObject,
+        validate: obj => validateObject(obj,
+            key => ['move', 'freeze', 'outcomes'].includes(key),
+            value => !Number.isNaN(value) && value >= 0)
+    },
+
     colors: {
         default: {
             'win': '#ACE680',
