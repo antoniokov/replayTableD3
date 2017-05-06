@@ -35,6 +35,12 @@ export default {
         validate: value => ['strict', 'highest', 'range', 'average'].includes(value)
     },
 
+    controls: {
+        default: ['play', 'previous', 'next', 'slider'],
+        parse: input => input.split(','),
+        validate: value => validateArray(value, value => controls.hasOwnProperty(value))
+    },
+
     speed: {
         default: 1.0,
         parse: Number.parseFloat,
