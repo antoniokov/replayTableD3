@@ -53,7 +53,7 @@ export default function (column, result, params) {
 
                 if (extraType) {
                     cell.text = result.extras[extraType][column];
-                    cell.classes = ['extra'];
+                    cell.classes = [`extra-${extraType}`];
                 } else {
                     cell.text = '';
                     cell.classes = [];

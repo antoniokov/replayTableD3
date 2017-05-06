@@ -267,7 +267,8 @@ export default class {
         const columns = ['round'];
         const labels = [''];
         this.params.columns.forEach((column, i) => {
-            if (column !== 'item') {
+            const classes = makeCell(column, this.data.results[1].results[0], this.params).classes;
+            if (column !== 'item' && !classes.includes('extra-item')) {
                 columns.push(column);
                 labels.push(this.params.labels[i] || '');
             }
