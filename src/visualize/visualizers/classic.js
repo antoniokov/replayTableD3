@@ -274,10 +274,11 @@ export default class {
             }
         });
 
-        const itemData = this.data.results.slice(1).map(round => {
-            const result = round.results.filter(result => result.item === item)[0];
-            return Object.assign({}, result, { roundMeta: round.meta });
-        });
+        const itemData = this.data.results
+            .map(round => {
+                const result = round.results.filter(result => result.item === item)[0];
+                return Object.assign({}, result, { roundMeta: round.meta });
+            }).filter(result => result.change !== null);
 
         this.table.classed('hidden', true);
         [this.drilldown.table, this.drilldown.rows, this.drilldown.cells] = this.renderTable(itemData, 'drilldown', columns, labels);
