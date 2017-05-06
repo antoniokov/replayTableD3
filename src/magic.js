@@ -8,15 +8,15 @@ import crash from './helpers/crash';
 
 
 export default function () {
-    Array.from(document.getElementsByClassName('replayTable'))
-        .forEach(table => {
+    return Array.from(document.getElementsByClassName('replayTable'))
+        .map(table => {
             const config = configure(table.id, table.dataset);
 
-            Promise.resolve(extract(config.extract))
+            return Promise.resolve(extract(config.extract))
                 .then(raw => {
                     const transformed = transform(raw, config.transform);
                     const calculated = calculate(transformed, config.calculate);
-                    const replayTable = visualize(calculated, config.visualize);
+                    return visualize(calculated, config.visualize);
                 })
                 .catch(error => crash(error));
         });
