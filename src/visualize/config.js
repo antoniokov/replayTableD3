@@ -1,7 +1,9 @@
 import * as visualizers from './visualizers';
+import * as controls from './controls';
 import isString from '../helpers/general/is-string';
 import parseObject from '../helpers/parsing/parse-object';
 import validateObject from '../helpers/validation/validate-object';
+import validateArray from '../helpers/validation/validate-array';
 
 
 export default {

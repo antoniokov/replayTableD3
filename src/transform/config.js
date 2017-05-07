@@ -37,12 +37,6 @@ export default {
         validate: value => validateArray(value, isString)
     },
 
-    collapseToRounds: {
-        default: false,
-        parse: input => input === 'true',
-        validate: value => typeof value === 'boolean'
-    },
-
     insertStartRound: {
         default: '0',
         parse: input => input,

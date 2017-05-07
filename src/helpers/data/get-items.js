@@ -1,3 +1,3 @@
-export default function (transformedData) {
-    return [...new Set(transformedData.reduce((list, round) => [...list, ...round.results.map(result => result.item)], []))];
+export default function (results) {
+    return [...new Set(results.reduce((list, round) => [...list, ...round.results.map(result => result.item)], []))];
 };
