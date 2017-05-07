@@ -23,7 +23,7 @@ export default class {
 
         this.durations = adjustDurations(params.durations, params.speed);
 
-        this.currentRound = params.startFromRound || this.data.meta.lastRound;
+        this.currentRound = params.startFromRound === null ? this.data.meta.lastRound : params.startFromRound;
         this.previewedRound = null;
         this.drilldown = {};
 
@@ -93,8 +93,9 @@ export default class {
                 .each(() => ++transitionsFinished)
                 .on('end', () => {
                     if (!--transitionsFinished) {
+                        const classes = this.table.attr('class');
                         this.table.remove();
-                        this.table = table.attr('class', 'main');
+                        this.table = table.attr('class', classes);
                         this.rows = rows;
                         this.cells = cells;
                         resolve();

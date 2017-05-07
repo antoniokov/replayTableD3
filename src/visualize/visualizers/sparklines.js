@@ -71,18 +71,10 @@ export default class extends Skeleton {
 
         const nextRoundResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
 
-        const animateOutcomes = this.params.columns.includes('outcome');
-        if (animateOutcomes) {
-            this.table.selectAll('td.outcome')
-                .transition()
-                .duration(this.durations.outcomes)
-                .style("background-color", cell => this.params.colors[nextRoundResults.get(cell.result.item).outcome] || 'transparent');
-        }
-
         this.table.selectAll('td.change')
             .text(cell => makeCell(cell.column, nextRoundResults.get(cell.result.item), this.params).text);
 
-        return this.move(roundIndex, animateOutcomes ? this.durations.outcomes : 0, this.durations.move);
+        return this.move(roundIndex, 0, this.durations.move);
     }
 
     preview (roundIndex) {
