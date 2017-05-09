@@ -93,9 +93,11 @@ export default class {
                 .each(() => ++transitionsFinished)
                 .on('end', () => {
                     if (!--transitionsFinished) {
-                        const classes = this.table.attr('class');
                         this.table.remove();
-                        this.table = table.attr('class', classes);
+                        this.table = table.each(function (d,i) {
+                            const classes = d3.select(this).attr('class');
+                            d3.select(this).attr('class', classes.replace('hidden', 'main'));
+                        });
                         this.rows = rows;
                         this.cells = cells;
                         resolve();

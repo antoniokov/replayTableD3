@@ -55,9 +55,9 @@ export default class extends Skeleton {
         [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, `${className} left`, this.left.columns);
         [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, `${className} right`, this.right.columns);
 
-        const tables = d3.selectAll(`${this.selector} table.main`);
-        const rows = d3.selectAll(`${this.selector} table.main > tbody > tr`);
-        const cells = d3.selectAll(`${this.selector} table.main > tbody > tr > td`);
+        const tables = d3.selectAll(`${this.selector} table.${className}`);
+        const rows = d3.selectAll(`${this.selector} table.${className} > tbody > tr`);
+        const cells = d3.selectAll(`${this.selector} table.${className} > tbody > tr > td`);
 
         return [tables, rows, cells];
     }
