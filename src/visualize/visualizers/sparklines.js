@@ -4,15 +4,14 @@ import getItems from '../../helpers/data/get-items';
 import getItemResults from '../../helpers/data/get-item-results';
 
 
-const columns = ['position', 'item', 'sparkline', 'score', 'opponent', 'change', 'equal', 'points'];
-
-
 export default class extends Skeleton {
     constructor (data, params) {
-        super(data, params);
-
         const items = getItems(data.results);
-        this.sparklinesData = new Map(items.map(item => [item, getItemResults(data.results, item)]));
+        const paramsEnriched = Object.assign(params, {
+            sparklinesData: new Map(items.map(item => [item, getItemResults(data.results, item)]))
+        });
+
+        super(data, paramsEnriched);
     }
 
     makeTable (data, className, columns) {
@@ -22,7 +21,7 @@ export default class extends Skeleton {
 
         const tbody = table.append('tbody');
         const rows = tbody.selectAll('tr')
-            .data(data, k => k.item || k.roundMeta.index)
+            .data(data, k => k.item)
             .enter().append('tr');
 
         const cells = rows.selectAll('td')
@@ -35,8 +34,6 @@ export default class extends Skeleton {
                 switch(cell.column) {
                     case 'item':
                         return this.drillDown(cell.result.item);
-                    case 'round':
-                        return this.endDrillDown(cell.result.roundMeta.index);
                     default:
                         return null;
                 }
@@ -49,11 +46,14 @@ export default class extends Skeleton {
         this.left = {};
         this.right = {};
 
-        this.left.columns = ['position', 'item', 'outcome'];
-        this.right.columns = ['match', 'change', 'points'];
+        const outcomes = Array.from({ length: this.roundsTotalNumber + 1 }, (v, i) => `outcome.${i}`);
+        this.left.columns = ['position', 'item', ...outcomes];
+        this.right.columns = ['match', 'points.change', 'points'];
 
         [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, `${className} left`, this.left.columns);
         [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, `${className} right`, this.right.columns);
+
+        this.right.table.style('left', `${this.left.table.node().getBoundingClientRect().right}px`);
 
         const tables = d3.selectAll(`${this.selector} table.${className}`);
         const rows = d3.selectAll(`${this.selector} table.${className} > tbody > tr`);

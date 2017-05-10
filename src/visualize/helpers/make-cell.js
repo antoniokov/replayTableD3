@@ -19,11 +19,6 @@ export default function (column, result, params) {
             cell.text = result.item;
             cell.classes = ['item', 'clickable'];
             return cell;
-        case 'outcome':
-            cell.text = '';
-            cell.classes = ['outcome'];
-            cell.backgroundColor = params.colors[result.outcome] || 'transparent';
-            return cell;
         case 'match':
             cell.text = result.match ? `${result.match.score}-${result.match.opponentScore} ${result.match.opponent}` : '';
             cell.classes = ['change'];
@@ -41,7 +36,24 @@ export default function (column, result, params) {
             cell.classes = ['round', 'clickable'];
             return cell;
         default:
-            if (calculations.hasOwnProperty(column)) {
+            if (column.includes('outcome')) {
+                cell.text = '';
+                cell.classes = ['outcome'];
+
+                const [outcome, roundIndex] = column.split('.');
+                if (roundIndex === undefined) {
+                    cell.backgroundColor = params.colors[result.outcome] || 'transparent';
+                } else {
+                    const itemResults = params.sparklinesData.get(result.item);
+                    if (roundIndex >= itemResults.length) {
+                        cell.backgroundColor = 'transparent';
+                    } else {
+                        cell.backgroundColor = params.colors[params.sparklinesData.get(result.item)[roundIndex].outcome] || 'transparent';
+                    }
+                }
+
+                return cell;
+            } else if (calculations.hasOwnProperty(column)) {
                 cell.text = result[column].total;
                 cell.classes = ['calculation'];
             } else if (column.includes('.change')) {

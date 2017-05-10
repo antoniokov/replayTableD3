@@ -23,6 +23,7 @@ export default class {
 
         this.durations = adjustDurations(params.durations, params.speed);
 
+        this.roundsTotalNumber = this.params.roundsTotalNumber || this.data.meta.lastRound;
         this.currentRound = params.startFromRound === null ? this.data.meta.lastRound : params.startFromRound;
         this.previewedRound = null;
         this.drilldown = {};
@@ -54,14 +55,13 @@ export default class {
             .attr('class', 'controls');
 
         const roundMeta = this.data.results[this.currentRound].meta;
-        const roundsTotalNumber = this.params.roundsTotalNumber || this.data.meta.lastRound;
 
         const controlsObject = {};
         const args = {
             play: [controls, roundMeta, this.play, this.pause],
             previous: [controls, roundMeta, this.previous],
             next: [controls, roundMeta, this.next],
-            slider: [controls, this.data.meta.lastRound, roundsTotalNumber, roundMeta, this.preview, this.endPreview]
+            slider: [controls, this.data.meta.lastRound, this.roundsTotalNumber, roundMeta, this.preview, this.endPreview]
         };
         list.forEach(control => controlsObject[control] = new Controls[control](...args[control]));
 
