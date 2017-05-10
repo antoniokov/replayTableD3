@@ -12,12 +12,12 @@ export default class {
         const customConstructors = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
         if (customConstructors.includes(column)) {
             return this[column](result, params);
-        } else if (column.includes('spark')) {
-            return this.makeSpark(column, result, params);
         } else if (calculations.hasOwnProperty(column)) {
             return this.makeCalculation(column, result, params);
         } else if (column.includes('.change')) {
             return this.makeChange(column, result, params);
+        } else if (column.includes('spark')) {
+            return this.makeSpark(column, result, params);
         } else if (mapParamToModule(column, result.extras)) {
             return this.makeExtra(column, result, params);
         } else {
@@ -70,6 +70,19 @@ export default class {
         return this;
     }
 
+    makeCalculation (column, result, params) {
+        this.text = result[column].total;
+        this.classes = ['calculation'];
+        return this;
+    }
+
+    makeChange (column, result, params) {
+        const calc = column.replace('.change', '');
+        this.text = numberToChange(result[calc].change);
+        this.classes = ['change'];
+        return this;
+    }
+
     makeSpark (column, result, params) {
         this.text = '';
         this.classes = ['outcome'];
@@ -83,19 +96,6 @@ export default class {
             this.backgroundColor = params.colors[itemResults[roundIndex].outcome] || 'transparent';
         }
 
-        return this;
-    }
-
-    makeCalculation (column, result, params) {
-        this.text = result[column].total;
-        this.classes = ['calculation'];
-        return this;
-    }
-
-    makeChange (column, result, params) {
-        const calc = column.replace('.change', '');
-        this.text = numberToChange(result[calc].change);
-        this.classes = ['change'];
         return this;
     }
 

@@ -46,7 +46,7 @@ export default class {
 
         this.tableContainer = d3.select(this.selector)
             .append('div')
-            .attr('class', 'table-container');
+            .attr('class', `table-container ${params.visualizer}`);
         [this.table, this.rows, this.cells] = this.renderTable(this.data.results[this.currentRound].results);
     }
 

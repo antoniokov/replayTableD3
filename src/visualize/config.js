@@ -59,17 +59,5 @@ export default {
         validate: obj => validateObject(obj,
             key => ['move', 'freeze', 'outcomes'].includes(key),
             value => !Number.isNaN(value) && value >= 0)
-    },
-
-    colors: {
-        default: {
-            'win': '#ACE680',
-            'draw': '#B3B3B3',
-            'loss': '#E68080'
-        },
-        parse: parseObject,
-        validate: obj => validateObject(obj,
-            key => ['win', 'draw', 'loss'].includes(key),
-            value => isString(value))
     }
 };

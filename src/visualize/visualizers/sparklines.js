@@ -72,7 +72,7 @@ export default class extends Skeleton {
         const nextRoundResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
 
         this.table.selectAll('td.change')
-            .text(cell => makeCell(cell.column, nextRoundResults.get(cell.result.item), this.params).text);
+            .text(cell => new Cell(cell.column, nextRoundResults.get(cell.result.item), this.params).text);
 
         return this.move(roundIndex, 0, this.durations.move);
     }
@@ -84,7 +84,7 @@ export default class extends Skeleton {
             .data(this.data.results[roundIndex].results, k => k.item);
 
         this.cells = this.rows.selectAll('td')
-            .data(result => this.params.columns.map(column => makeCell(column, result, this.params)))
+            .data(result => this.params.columns.map(column => new Cell(column, result, this.params)))
             .attr('class', cell => cell.classes.join(' '))
             .style('background-color', cell => cell.backgroundColor || 'transparent')
             .text(cell => cell.text);
@@ -126,7 +126,7 @@ export default class extends Skeleton {
         const columns = ['round'];
         const labels = [''];
         this.params.columns.forEach((column, i) => {
-            const classes = makeCell(column, this.data.results[1].results[0], this.params).classes;
+            const classes = new Cell(column, this.data.results[1].results[0], this.params).classes;
             if (column !== 'item' && !classes.includes('extra-item')) {
                 columns.push(column);
                 labels.push(this.params.labels[i] || '');
