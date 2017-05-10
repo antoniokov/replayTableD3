@@ -1,5 +1,5 @@
 import Skeleton from '../skeleton';
-import makeCell from '../helpers/make-cell';
+import Cell from '../cell';
 import getItems from '../../helpers/data/get-items';
 import getItemResults from '../../helpers/data/get-item-results';
 
@@ -25,7 +25,7 @@ export default class extends Skeleton {
             .enter().append('tr');
 
         const cells = rows.selectAll('td')
-            .data(result => columns.map(column => makeCell(column, result, this.params)))
+            .data(result => columns.map(column => new Cell(column, result, this.params)))
             .enter().append('td')
             .attr('class', cell => cell.classes.join(' '))
             .style('background-color', cell => cell.backgroundColor || 'transparent')
@@ -46,8 +46,8 @@ export default class extends Skeleton {
         this.left = {};
         this.right = {};
 
-        const outcomes = Array.from({ length: this.roundsTotalNumber + 1 }, (v, i) => `outcome.${i}`);
-        this.left.columns = ['position', 'item', ...outcomes];
+        const sparks = Array.from({ length: this.roundsTotalNumber + 1 }, (v, i) => `spark.${i}`);
+        this.left.columns = ['position', 'item', ...sparks];
         this.right.columns = ['match', 'points.change', 'points'];
 
         [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, `${className} left`, this.left.columns);

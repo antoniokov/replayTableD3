@@ -1,5 +1,5 @@
 import Skeleton from '../skeleton';
-import makeCell from '../helpers/make-cell';
+import Cell from '../cell';
 import fromCamelCase from '../../helpers/general/from-camel-case';
 import getItemResults from '../../helpers/data/get-item-results';
 
@@ -31,7 +31,7 @@ export default class extends Skeleton {
             .enter().append('tr');
 
         const cells = rows.selectAll('td')
-            .data(result => columns.map(column => makeCell(column, result, this.params)))
+            .data(result => columns.map(column => new Cell(column, result, this.params)))
             .enter().append('td')
             .attr('class', cell => cell.classes.join(' '))
             .style('background-color', cell => cell.backgroundColor || 'transparent')
