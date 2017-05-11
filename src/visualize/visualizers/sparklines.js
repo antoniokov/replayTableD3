@@ -1,7 +1,45 @@
 import Skeleton from '../skeleton';
-import Cell from '../cell';
+import skeletonCell from '../cell';
+import numberToChange from '../../helpers/general/number-to-change';
 import getItems from '../../helpers/data/get-items';
 import getItemResults from '../../helpers/data/get-item-results';
+import toCSS from '../../helpers/general/to-css';
+
+
+class Cell extends skeletonCell {
+    score (result, params) {
+        this.text = result.match ? `${result.match.score}:${result.match.opponentScore}` : '';
+        this.classes = ['score', 'change'];
+        this.color = params.colors[result.outcome];
+        return this;
+    }
+
+    opponent (result, params) {
+        this.text = result.match.opponent || '';
+        this.classes = ['opponent', 'change'];
+        return this;
+    }
+
+    equal (result, params) {
+        this.text = result.position.strict === 1 ? '=' : '';
+        this.classes = ['label'];
+        return this;
+    }
+
+    label (result, params) {
+        this.text = result.position.strict === 1 ? params.label : '';
+        this.classes = ['label'];
+        return this;
+    }
+
+    makeChange (column, result, params) {
+        const calc = column.replace('.change', '');
+        this.text = numberToChange(result[calc].change, '0');
+        this.classes = ['change'];
+        this.color = params.colors[result.outcome];
+        return this;
+    }
+}
 
 
 export default class extends Skeleton {
@@ -28,7 +66,11 @@ export default class extends Skeleton {
             .data(result => columns.map(column => new Cell(column, result, this.params)))
             .enter().append('td')
             .attr('class', cell => cell.classes.join(' '))
-            .style('background-color', cell => cell.backgroundColor || 'transparent')
+            .each(function(cell) {
+                ['color', 'backgroundColor']
+                    .filter(property => cell.hasOwnProperty(property))
+                    .forEach(property => d3.select(this).style(toCSS(property), cell[property]));
+            })
             .text(cell => cell.text)
             .on('click', cell => {
                 switch(cell.column) {
@@ -48,7 +90,7 @@ export default class extends Skeleton {
 
         const sparks = Array.from({ length: this.roundsTotalNumber + 1 }, (v, i) => `spark.${i}`);
         this.left.columns = ['position', 'item', ...sparks];
-        this.right.columns = ['match', 'points.change', 'points'];
+        this.right.columns = ['score', 'opponent', 'points.change', 'equal', 'points', 'label'];
 
         [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, `${className} left`, this.left.columns);
         [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, `${className} right`, this.right.columns);

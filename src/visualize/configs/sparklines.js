@@ -21,5 +21,11 @@ export default {
         validate: obj => validateObject(obj,
             key => ['win', 'draw', 'loss'].includes(key),
             value => isString(value))
+    },
+
+    label: {
+        default: 'points',
+        parse: input => input,
+        validate: isString
     }
 };

@@ -4,13 +4,12 @@ import formatPosition from './helpers/format-position';
 import mapParamToModule from '../configure/helpers/map-param-to-module';
 
 
-export default class {
+export default class Cell {
     constructor (column, result, params) {
         this.column = column;
         this.result = result;
 
-        const customConstructors = Object.getOwnPropertyNames(Object.getPrototypeOf(this));
-        if (customConstructors.includes(column)) {
+        if (this[column]) {
             return this[column](result, params);
         } else if (calculations.hasOwnProperty(column)) {
             return this.makeCalculation(column, result, params);
