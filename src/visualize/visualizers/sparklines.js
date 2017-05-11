@@ -6,42 +6,6 @@ import getItemResults from '../../helpers/data/get-item-results';
 import toCSS from '../../helpers/general/to-css';
 
 
-class Cell extends skeletonCell {
-    score (result, params) {
-        this.text = result.match ? `${result.match.score}:${result.match.opponentScore}` : '';
-        this.classes = ['score', 'change'];
-        this.color = params.colors[result.outcome];
-        return this;
-    }
-
-    opponent (result, params) {
-        this.text = result.match.opponent || '';
-        this.classes = ['opponent', 'change'];
-        return this;
-    }
-
-    equal (result, params) {
-        this.text = result.position.strict === 1 ? '=' : '';
-        this.classes = ['label'];
-        return this;
-    }
-
-    label (result, params) {
-        this.text = result.position.strict === 1 ? params.label : '';
-        this.classes = ['label'];
-        return this;
-    }
-
-    makeChange (column, result, params) {
-        const calc = column.replace('.change', '');
-        this.text = numberToChange(result[calc].change, '0');
-        this.classes = ['change'];
-        this.color = params.colors[result.outcome];
-        return this;
-    }
-}
-
-
 export default class extends Skeleton {
     constructor (data, params) {
         const items = getItems(data.results);
@@ -113,8 +77,16 @@ export default class extends Skeleton {
 
         const nextRoundResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
 
+        const params = this.params;
         this.table.selectAll('td.change')
-            .text(cell => new Cell(cell.column, nextRoundResults.get(cell.result.item), this.params).text);
+            .each(function (currentCell) {
+                const cell = new Cell(currentCell.column, nextRoundResults.get(currentCell.result.item), params);
+                if (cell.color) {
+                    d3.select(this).style('color', cell.color)
+                }
+
+                d3.select(this).text(cell.text);
+            });
 
         return this.move(roundIndex, 0, this.durations.move);
     }
@@ -207,3 +179,39 @@ export default class extends Skeleton {
         }
     }
 };
+
+
+class Cell extends skeletonCell {
+    score (result, params) {
+        this.text = result.match ? `${result.match.score}:${result.match.opponentScore}` : '';
+        this.classes = ['score', 'change'];
+        this.color = params.colors[result.outcome];
+        return this;
+    }
+
+    opponent (result, params) {
+        this.text = result.match ? result.match.opponent : '';
+        this.classes = ['opponent', 'change'];
+        return this;
+    }
+
+    equal (result, params) {
+        this.text = result.position.strict === 1 ? '=' : '';
+        this.classes = ['label', 'change'];
+        return this;
+    }
+
+    label (result, params) {
+        this.text = result.position.strict === 1 ? params.label : '';
+        this.classes = ['label', 'change'];
+        return this;
+    }
+
+    makeChange (column, result, params) {
+        const calc = column.replace('.change', '');
+        this.text = numberToChange(result[calc].change, '0');
+        this.classes = ['change'];
+        this.color = params.colors[result.outcome];
+        return this;
+    }
+}
