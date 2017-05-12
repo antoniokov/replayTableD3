@@ -46,6 +46,10 @@ export default class extends Skeleton {
                 }
             });
 
+        table.selectAll('td.spark')
+            .append('span')
+            .attr('class', 'position-line');
+
         return [table, rows, cells];
     }
 
@@ -156,7 +160,7 @@ export default class extends Skeleton {
                 .text(this.params.allLabel);
         }
 
-        this.left.table.selectAll('.outcome')
+        this.left.table.selectAll('td.spark')
             .classed('muted', cell => {
                 return !cell.result.match || (cell.result.item !== item && cell.result.match.opponent !== item)
             });
@@ -168,7 +172,7 @@ export default class extends Skeleton {
         this.drilldown.controls.remove();
         this.drilldown.controls = null;
 
-        this.left.table.selectAll('.outcome')
+        this.left.table.selectAll('td.spark')
             .classed('muted', false);
 
         this.dispatch.call('endDrillDown', this, null);

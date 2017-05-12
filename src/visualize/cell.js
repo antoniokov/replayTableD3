@@ -84,7 +84,7 @@ export default class Cell {
 
     makeSpark (column, result, params) {
         this.text = '';
-        this.classes = ['outcome'];
+        this.classes = ['spark'];
 
         const [spark, roundIndex] = column.split('.');
         const itemResults = params.sparklinesData.get(result.item);

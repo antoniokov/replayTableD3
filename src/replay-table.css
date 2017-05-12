@@ -334,6 +334,6 @@ h1 {
 	font-size: 0.8rem;
 }
 
-.replayTable td.outcome.muted {
+.replayTable td.spark.muted {
 	background-color: transparent!important;
 }
