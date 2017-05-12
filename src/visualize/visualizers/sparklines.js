@@ -48,11 +48,30 @@ export default class extends Skeleton {
         return [table, rows, cells];
     }
 
+    makeSlider (position = 'top') {
+        const slider = position === 'top'
+            ? this.left.table.select('tbody').insert('tr', 'tr')
+            : this.left.table.select('tbody').append('tr');
+
+        slider
+            .attr('class', `sparklines-slider ${position}`)
+            .selectAll('td')
+            .data(this.left.columns.slice(0, 3))
+            .enter().append('td')
+            .attr('colspan', (d,i) => i === 2 ? this.roundsTotalNumber: null)
+            .attr('class', (d,i) => i === 2 ? 'slider-cell' : null);
+
+        slider.select('.slider-cell')
+            .append('span')
+            .attr('class', 'slider-toggle');
+    }
+
     renderTable (data, className = 'main') {
         this.left = {};
         this.right = {};
+        this.slider = {};
 
-        const sparks = Array.from({ length: this.roundsTotalNumber + 1 }, (v, i) => `spark.${i}`);
+        const sparks = Array.from({ length: this.roundsTotalNumber }, (v, i) => `spark.${i+1}`);
         this.left.columns = ['position', 'item', ...sparks];
         this.right.columns = ['score', 'opponent', 'points.change', 'equal', 'points', 'label'];
 
@@ -64,6 +83,9 @@ export default class extends Skeleton {
         const tables = d3.selectAll(`${this.selector} table.${className}`);
         const rows = d3.selectAll(`${this.selector} table.${className} > tbody > tr`);
         const cells = d3.selectAll(`${this.selector} table.${className} > tbody > tr > td`);
+
+        this.slider.top = this.makeSlider('top');
+        this.slider.bottom = this.makeSlider('bottom');
 
         return [tables, rows, cells];
     }
