@@ -23,8 +23,14 @@ export default {
             value => isString(value))
     },
 
-    label: {
+    pointsLabel: {
         default: 'points',
+        parse: input => input,
+        validate: isString
+    },
+
+    allLabel: {
+        default: 'All',
         parse: input => input,
         validate: isString
     }

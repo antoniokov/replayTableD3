@@ -297,3 +297,7 @@ h1 {
 	color: gray;
 	font-size: 0.8rem;
 }
+
+.replayTable td.outcome.muted {
+	background-color: transparent!important;
+}

@@ -91,7 +91,9 @@ export default class Cell {
 
         if (roundIndex >= itemResults.length) {
             this.backgroundColor = 'transparent';
+            this.result = {};
         } else {
+            this.result = itemResults[roundIndex];
             this.backgroundColor = params.colors[itemResults[roundIndex].outcome] || 'transparent';
         }
 

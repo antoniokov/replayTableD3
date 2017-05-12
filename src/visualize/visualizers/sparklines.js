@@ -24,7 +24,8 @@ export default class extends Skeleton {
         const tbody = table.append('tbody');
         const rows = tbody.selectAll('tr')
             .data(data, k => k.item)
-            .enter().append('tr');
+            .enter().append('tr')
+            .attr('id', k => k.item);
 
         const cells = rows.selectAll('td')
             .data(result => columns.map(column => new Cell(column, result, this.params)))
@@ -73,7 +74,7 @@ export default class extends Skeleton {
 
         const sparks = Array.from({ length: this.roundsTotalNumber }, (v, i) => `spark.${i+1}`);
         this.left.columns = ['position', 'item', ...sparks];
-        this.right.columns = ['score', 'opponent', 'points.change', 'equal', 'points', 'label'];
+        this.right.columns = ['score', 'opponent', 'points.change', 'equal', 'points', 'pointsLabel'];
 
         [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, `${className} left`, this.left.columns);
         [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, `${className} right`, this.right.columns);
@@ -148,57 +149,30 @@ export default class extends Skeleton {
     drillDown (item) {
         this.dispatch.call('drillDown', this, item);
 
-        this.controls.classed('hidden', true);
-        this.drilldown.controls = this.controlsContainer.append('div')
-            .attr('class', 'drilldown-contorls');
-        this.drilldown.controls.append('div')
-            .attr('class', 'back')
-            .text('<-')
-            .on('click', this.endDrillDown.bind(this));
-        this.drilldown.controls.append('div')
-            .attr('class', 'item')
-            .text(item);
+        if (!this.drilldown.controls) {
+            this.drilldown.controls = this.controls.append('div')
+                .attr('class', 'drilldown-control')
+                .on('click', this.endDrillDown)
+                .text(this.params.allLabel);
+        }
 
-        const columns = ['round'];
-        const labels = [''];
-        this.params.columns.forEach((column, i) => {
-            const classes = new Cell(column, this.data.results[1].results[0], this.params).classes;
-            if (column !== 'item' && !classes.includes('extra-item')) {
-                columns.push(column);
-                labels.push(this.params.labels[i] || '');
-            }
-        });
-
-        const itemData = this.data.results
-            .map(round => {
-                const result = round.results.filter(result => result.item === item)[0];
-                return Object.assign({}, result, { roundMeta: round.meta });
-            }).filter(result => result.change !== null);
-
-        this.table.classed('hidden', true);
-        [this.drilldown.table, this.drilldown.rows, this.drilldown.cells] = this.renderTable(itemData, 'drilldown', columns, labels);
+        this.left.table.selectAll('.outcome')
+            .classed('muted', cell => {
+                return !cell.result.match || (cell.result.item !== item && cell.result.match.opponent !== item)
+            });
 
         return Promise.resolve();
     }
 
-    endDrillDown (roundIndex = null) {
-        const end = () => {
-            this.dispatch.call('endDrillDown', this, roundIndex);
-            return Promise.resolve();
-        };
-
+    endDrillDown () {
         this.drilldown.controls.remove();
-        this.controls.classed('hidden', false);
+        this.drilldown.controls = null;
 
-        this.drilldown.table.remove();
-        this.table.classed('hidden', false);
+        this.left.table.selectAll('.outcome')
+            .classed('muted', false);
 
-        if (roundIndex !== null) {
-            return Promise.resolve(this.to(roundIndex))
-                .then(end);
-        } else {
-            end();
-        }
+        this.dispatch.call('endDrillDown', this, null);
+        return Promise.resolve();
     }
 };
 
@@ -223,8 +197,8 @@ class Cell extends skeletonCell {
         return this;
     }
 
-    label (result, params) {
-        this.text = result.position.strict === 1 ? params.label : '';
+    pointsLabel (result, params) {
+        this.text = result.position.strict === 1 ? params.pointsLabel : '';
         this.classes = ['label', 'change'];
         return this;
     }
