@@ -34,8 +34,14 @@ export default class {
         this.dispatch.on('pause', () => this.isPlaying = false);
         this.dispatch.on('roundPreview', roundMeta => this.previewedRound = roundMeta.index);
         this.dispatch.on('endPreview', roundMeta => this.previewedRound = null);
-        this.dispatch.on('drillDown', item => this.drilldown.item = item);
-        this.dispatch.on('endDrillDown', item => this.drilldown = {});
+        this.dispatch.on('drillDown', item => {
+            this.tableContainer.classed('drilldowned', true);
+            this.drilldown.item = item
+        });
+        this.dispatch.on('endDrillDown', item => {
+            this.tableContainer.classed('drilldowned', false);
+            this.drilldown = {}
+        });
 
         this.selector = params.id ? `#${params.id}` : '.replayTable';
 
