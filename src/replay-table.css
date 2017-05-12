@@ -179,6 +179,7 @@ h1 {
 	white-space: nowrap;
 	padding: 0 2px;
 
+	min-width: 12px;
 	height: 16px;
 	background: #fff;
 	border: 1px solid #999;
@@ -289,6 +290,7 @@ h1 {
 	white-space: nowrap;
 	padding: 0 2px;
 
+	min-width: 12px;
 	height: 16px;
 	background: #fff;
 	border: 1px solid #999;
@@ -340,6 +342,7 @@ h1 {
 	white-space: nowrap;
 	padding: 0 2px;
 
+	min-width: 12px;
 	height: 16px;
 	background: #fff;
 	border: 1px solid #999;
@@ -419,6 +422,7 @@ h1 {
 	border-bottom: 1px dotted rgba(0,0,0,0.1);
 }
 .replayTable td{
+	white-space: nowrap;
 	padding: 3px 5px;
 	font-size: 14px;
 	min-height: 23px;
