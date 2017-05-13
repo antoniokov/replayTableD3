@@ -40,7 +40,11 @@ export default class extends Skeleton {
             .on('click', cell => {
                 switch(cell.column) {
                     case 'item':
-                        return this.drillDown(cell.result.item);
+                        if (this.drilldown.item !== cell.result.item) {
+                            return this.drillDown(cell.result.item);
+                        } else {
+                            return this.endDrillDown();
+                        }
                     default:
                         return null;
                 }
@@ -68,7 +72,8 @@ export default class extends Skeleton {
 
         slider.select('.slider-cell')
             .append('span')
-            .attr('class', 'slider-toggle');
+            .attr('class', 'slider-toggle')
+            .text(this.data.results[this.currentRound].meta.name);
     }
 
     renderTable (data, className = 'main') {

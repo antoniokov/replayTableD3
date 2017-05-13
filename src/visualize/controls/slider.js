@@ -23,6 +23,7 @@ export default class {
             .attr('class', 'slider-toggle')
             .style('left', progress)
             .text(roundMeta.name)
+            .style('margin-left', this.adaptMargin)
             .call(d3.drag()
                 .on("drag", () => {
                     const round = Math.min(Math.round(this.scale.invert(d3.event.x)), roundsAvailable);
@@ -38,12 +39,18 @@ export default class {
         this.onRoundChange = this.onRoundChange.bind(this);
     }
 
+    adaptMargin () {
+        const width = d3.select(this).node().getBoundingClientRect().width;
+        return `-${width/2}px`;
+    }
+
     onRoundPreview (roundMeta) {
         const progress = `${this.roundToPercent(roundMeta.index)}%`;
 
         this.toggle
             .style('left', progress)
-            .text(roundMeta.name);
+            .text(roundMeta.name)
+            .style('margin-left', this.adaptMargin);
 
         this.progress
             .style('width', progress);
@@ -56,7 +63,10 @@ export default class {
             .transition()
             .duration(500)
             .styleTween('left', () => d3.interpolateString(this.toggle.node().style.left, progress))
-            .on('end', () => this.toggle.text(roundMeta.name));
+            .on('end', () => {
+                this.toggle.text(roundMeta.name)
+                    .style('margin-left', this.adaptMargin);
+            });
 
         this.progress
             .transition()
