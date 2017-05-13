@@ -28,6 +28,9 @@ h1 {
 	margin-bottom: 30px;
 }
 .replayTable > .controls-container > .controls{}
+.replayTable > .controls-container > .controls.hidden{
+	display: none;
+}
 .replayTable > .controls-container > .controls > div{
 	display: inline-block;
 	vertical-align: bottom;
@@ -166,7 +169,7 @@ h1 {
 
 .replayTable .slider{
 	display: inline-block;
-
+	margin-left: 20px;
 	width: 230px;
 	position: relative;
 	height: 1px;
@@ -452,8 +455,15 @@ h1 {
 }
 
 .replayTable td.change {
-	color: gray;
-	font-size: 12px;
+	color: rgba(0,0,0,0.8);
+	font-size: 14px;
+}
+.replayTable .main.right td.change{
+	text-align: center;
+}
+.replayTable .main.right td.opponent.change,
+.replayTable .main.right td.label.change{
+	text-align: left;
 }
 
 .replayTable td.spark.muted {
@@ -465,6 +475,4 @@ h1 {
 
 	z-index: 2;
 	background: rgba(255,255,255,0.95);
-
-
 }
