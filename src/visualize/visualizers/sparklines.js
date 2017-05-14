@@ -9,8 +9,13 @@ import toCSS from '../../helpers/general/to-css';
 export default class extends Skeleton {
     constructor (data, params) {
         const items = getItems(data.results);
-        const paramsEnriched = Object.assign(params, {
-            sparklinesData: new Map(items.map(item => [item, getItemResults(data.results, item)]))
+        const paramsEnriched = Object.assign({}, params, {
+            sparklinesData: new Map(items.map(item => [item, getItemResults(data.results, item)])),
+            darkSparkColors: {
+                'win': '#AAD579', //d3.color(params.sparkColors.win).darker(0.3),
+                'draw': '#CCCCCC', //d3.color(params.sparkColors.draw).darker(),
+                'loss': '#E89B77' //d3.color(params.sparkColors.loss).darker(),
+            }
         });
 
         super(data, paramsEnriched);
@@ -27,8 +32,9 @@ export default class extends Skeleton {
             .enter().append('tr')
             .attr('class', className.includes('left') ? 'left' : 'right');
 
+        const paramsEnriched = Object.assign({}, this.params, { currentRound: this.currentRound });
         const cells = rows.selectAll('td')
-            .data(result => columns.map(column => new Cell(column, result, this.params)))
+            .data(result => columns.map(column => new Cell(column, result, paramsEnriched)))
             .enter().append('td')
             .attr('class', cell => cell.classes.join(' '))
             .each(function(cell) {
@@ -61,7 +67,6 @@ export default class extends Skeleton {
         this.sparks = table.selectAll('td.spark')
             .filter(cell => Number.parseInt(cell.column.split('.')[1]) <= this.data.meta.lastRound);
 
-        this.sparks.style('opacity', cell => Number.parseInt(cell.column.split('.')[1]) === this.currentRound ? '1.0' : '0.55');
 
         const top = d3.scaleLinear()
             .domain([1, this.data.results[0].results.length])
@@ -142,6 +147,10 @@ export default class extends Skeleton {
             });
 
         return this.move(roundIndex, 0, this.durations.move);
+    }
+
+    first () {
+        return this.to(1);
     }
 
     preview (roundIndex) {

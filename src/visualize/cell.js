@@ -86,7 +86,7 @@ export default class Cell {
         this.text = '';
         this.classes = ['spark'];
 
-        const [spark, roundIndex] = column.split('.');
+        const roundIndex = Number.parseInt(column.split('.')[1]);
         const itemResults = params.sparklinesData.get(result.item);
 
         if (roundIndex >= itemResults.length) {
@@ -94,7 +94,13 @@ export default class Cell {
             this.result = {};
         } else {
             this.result = itemResults[roundIndex];
-            this.backgroundColor = params.sparkColors[itemResults[roundIndex].outcome] || 'transparent';
+
+            if (roundIndex === params.currentRound) {
+                this.classes.push('current');
+                this.backgroundColor = params.darkSparkColors[itemResults[roundIndex].outcome] || 'transparent';
+            } else {
+                this.backgroundColor = params.sparkColors[itemResults[roundIndex].outcome] || 'transparent';
+            }
         }
 
         return this;

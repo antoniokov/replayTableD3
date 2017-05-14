@@ -25,9 +25,9 @@ export default {
 
     sparkColors: {
         default: {
-            'win': '#A8C968',
-            'draw': '#C2C2C2',
-            'loss': '#D78B68'
+            'win': '#D7E7C1', //#A8C968
+            'draw': '#F0F0F0', //#C2C2C2
+            'loss': '#EFCEBA' //#D78B68
         },
         parse: parseObject,
         validate: obj => validateObject(obj,
