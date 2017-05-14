@@ -114,7 +114,7 @@ export default class extends Skeleton {
         [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, `${className} left`, this.left.columns);
         [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, `${className} right`, this.right.columns);
 
-        this.right.table.style('left', `${this.left.table.node().getBoundingClientRect().right}px`);
+        this.moveRightTable();
 
         this.slider.top = this.makeSlider('top');
         this.slider.bottom = this.makeSlider('bottom');
@@ -124,6 +124,21 @@ export default class extends Skeleton {
         const cells = rows.selectAll('td');
 
         return [tables, rows, cells];
+    }
+
+    moveRightTable (duration = 0) {
+        const previousValue = this.right.left;
+        const spark = this.left.table.select('.spark.current').node();
+        this.right.left = spark.offsetLeft + spark.offsetWidth;
+
+        if (duration) {
+            this.right.table
+                .transition()
+                .duration(duration)
+                .styleTween('left', () => d3.interpolateString(`${previousValue}px`, `${this.right.left}px`));
+        } else {
+            this.right.table.style('left', `${this.right.left}px`);
+        }
     }
 
     to (roundIndex) {
@@ -145,6 +160,8 @@ export default class extends Skeleton {
 
                 d3.select(this).text(cell.text);
             });
+
+        this.moveRightTable(this.durations.move);
 
         return this.move(roundIndex, 0, this.durations.move);
     }
