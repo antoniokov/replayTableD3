@@ -19,6 +19,10 @@ export default class extends Skeleton {
         });
 
         super(data, paramsEnriched);
+
+        this.durations.scale = d3.scaleLinear()
+            .domain([1, data.meta.lastRound])
+            .range([this.durations.move, 1.5*this.durations.move]);
     }
 
     makeTable (data, className, columns) {
@@ -96,11 +100,23 @@ export default class extends Skeleton {
             .attr('colspan', (d,i) => i === 2 ? this.roundsTotalNumber: null)
             .attr('class', (d,i) => i === 2 ? 'slider-cell' : null);
 
-        slider.select('.slider-cell')
+        this.slider.left = `${this.slider.scale(this.currentRound)}px`;
+        return slider.select('.slider-cell')
             .append('span')
             .attr('class', 'slider-toggle')
-            .style('left', `${this.slider.x(this.currentRound)}px`)
+            .style('left', this.slider.left)
             .text(this.data.results[this.currentRound].meta.name);
+    }
+
+    moveSlider (roundIndex, duration) {
+        const previous = this.slider.left;
+        this.slider.left =`${this.slider.scale(roundIndex)}px`;
+        [this.slider.top, this.slider.bottom].map(slider => {
+            slider
+                .transition()
+                .duration(duration)
+                .style('left', this.slider.left);
+        });
     }
 
     renderTable (data, className = 'main') {
@@ -124,7 +140,7 @@ export default class extends Skeleton {
         const right = Math.max(...offsets) + width;
 
 
-        this.slider.x = d3.scaleLinear()
+        this.slider.scale = d3.scaleLinear()
             .domain([1, this.data.meta.lastRound])
             .range([width/2, right - left - width + 1])
             .clamp(true);
@@ -160,6 +176,7 @@ export default class extends Skeleton {
             return Promise.reject(`Sorry we can't go to round #${roundIndex}`);
         }
 
+        const change = roundIndex - this.currentRound;
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
         const nextRoundResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
@@ -175,9 +192,11 @@ export default class extends Skeleton {
                 d3.select(this).text(cell.text);
             });
 
-        this.moveRightTable(this.durations.move);
+        const duration = this.durations.scale(Math.abs(change));
+        this.moveRightTable(duration);
+        this.moveSlider(roundIndex, duration);
 
-        return this.move(roundIndex, 0, this.durations.move);
+        return this.move(roundIndex, 0, duration);
     }
 
     first () {
