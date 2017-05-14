@@ -1,3 +1,12 @@
 export default function (rows) {
-    return new Map(rows.nodes().map(n => [n.__data__.item, n.getBoundingClientRect().top]));
+    const ys = {};
+    rows.nodes().forEach(n => {
+        const item = n.__data__.item;
+        const top = n.getBoundingClientRect().top;
+        if (!ys[item] || ys[item] < top) {
+            ys[item] = top
+        }
+    });
+
+    return ys;
 };

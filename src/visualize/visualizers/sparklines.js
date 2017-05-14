@@ -25,7 +25,7 @@ export default class extends Skeleton {
         const rows = tbody.selectAll('tr')
             .data(data, k => k.item)
             .enter().append('tr')
-            .attr('id', k => k.item);
+            .attr('class', className.includes('left') ? 'left' : 'right');
 
         const cells = rows.selectAll('td')
             .data(result => columns.map(column => new Cell(column, result, this.params)))
@@ -50,11 +50,32 @@ export default class extends Skeleton {
                 }
             });
 
-        table.selectAll('td.spark')
-            .append('span')
-            .attr('class', 'position-line');
+        if (className.includes('left')) {
+            this.enrichSparks(table);
+        }
 
         return [table, rows, cells];
+    }
+
+    enrichSparks (table) {
+        this.sparks = table.selectAll('td.spark')
+            .filter(cell => Number.parseInt(cell.column.split('.')[1]) <= this.data.meta.lastRound);
+
+        this.sparks.style('opacity', cell => Number.parseInt(cell.column.split('.')[1]) === this.currentRound ? '1.0' : '0.55');
+
+        const top = d3.scaleLinear()
+            .domain([1, this.data.results[0].results.length])
+            .range([0, 100]);
+
+        this.sparks
+            .append('span')
+            .attr('class', 'spark-position')
+            .style('top', cell => `${top(cell.result.position.strict)}%`);
+
+        this.sparks
+            .append('span')
+            .attr('class', 'spark-score muted')
+            .text(cell => cell.result.match ? `${cell.result.match.score}:${cell.result.match.opponentScore}` : '');
     }
 
     makeSlider (position = 'top') {
@@ -90,12 +111,12 @@ export default class extends Skeleton {
 
         this.right.table.style('left', `${this.left.table.node().getBoundingClientRect().right}px`);
 
-        const tables = d3.selectAll(`${this.selector} table.${className}`);
-        const rows = d3.selectAll(`${this.selector} table.${className} > tbody > tr`);
-        const cells = d3.selectAll(`${this.selector} table.${className} > tbody > tr > td`);
-
         this.slider.top = this.makeSlider('top');
         this.slider.bottom = this.makeSlider('bottom');
+
+        const tables = d3.selectAll(`${this.selector} table.${className}`);
+        const rows = d3.selectAll(d3.merge([this.left.rows.nodes(), this.right.rows.nodes()]));
+        const cells = rows.selectAll('td');
 
         return [tables, rows, cells];
     }
@@ -165,10 +186,11 @@ export default class extends Skeleton {
                 .text(this.params.allLabel);
         }
 
-        this.left.table.selectAll('td.spark')
-            .classed('muted', cell => {
-                return !cell.result.match || (cell.result.item !== item && cell.result.match.opponent !== item)
-            });
+        this.sparks
+            .classed('muted', cell => !cell.result.match || (cell.result.item !== item && cell.result.match.opponent !== item));
+
+        this.sparks.selectAll('.spark-score')
+            .classed('muted', cell => !cell.result.match || cell.result.item === item || cell.result.match.opponent !== item);
 
         return Promise.resolve();
     }
@@ -177,8 +199,10 @@ export default class extends Skeleton {
         this.drilldown.controls.remove();
         this.drilldown.controls = null;
 
-        this.left.table.selectAll('td.spark')
-            .classed('muted', false);
+        this.sparks.classed('muted', false);
+
+        this.sparks.selectAll('.spark-score')
+            .classed('muted', true);
 
         this.dispatch.call('endDrillDown', this, null);
         return Promise.resolve();

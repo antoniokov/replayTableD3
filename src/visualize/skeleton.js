@@ -95,7 +95,7 @@ export default class {
                 .transition()
                 .delay(delay)
                 .duration(duration)
-                .style('transform', (cell, i) => `translateY(${nextYs.get(cell.result.item) - currentYs.get(cell.result.item)}px)`)
+                .style('transform', (cell, i) => `translateY(${nextYs[cell.result.item] - currentYs[cell.result.item]}px)`)
                 .each(() => ++transitionsFinished)
                 .on('end', () => {
                     if (!--transitionsFinished) {

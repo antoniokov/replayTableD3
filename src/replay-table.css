@@ -470,6 +470,10 @@ h1 {
 	background-color: transparent!important;
 }
 
+.replayTable span.spark-score.muted {
+	visibility: hidden;
+}
+
 .replayTable  .main.right{
 	top: 6px;
 

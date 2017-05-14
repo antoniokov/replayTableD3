@@ -94,7 +94,7 @@ export default class Cell {
             this.result = {};
         } else {
             this.result = itemResults[roundIndex];
-            this.backgroundColor = params.colors[itemResults[roundIndex].outcome] || 'transparent';
+            this.backgroundColor = params.sparkColors[itemResults[roundIndex].outcome] || 'transparent';
         }
 
         return this;
