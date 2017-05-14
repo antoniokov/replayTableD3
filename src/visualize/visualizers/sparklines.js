@@ -99,6 +99,7 @@ export default class extends Skeleton {
         slider.select('.slider-cell')
             .append('span')
             .attr('class', 'slider-toggle')
+            .style('left', `${this.slider.x(this.currentRound)}px`)
             .text(this.data.results[this.currentRound].meta.name);
     }
 
@@ -116,8 +117,21 @@ export default class extends Skeleton {
 
         this.moveRightTable();
 
+
+        const offsets = this.sparks.nodes().map(n => n.offsetLeft);
+        const width = this.sparks.node().offsetWidth;
+        const left = Math.min(...offsets);
+        const right = Math.max(...offsets) + width;
+
+
+        this.slider.x = d3.scaleLinear()
+            .domain([1, this.data.meta.lastRound])
+            .range([width/2, right - left - width + 1])
+            .clamp(true);
+
         this.slider.top = this.makeSlider('top');
         this.slider.bottom = this.makeSlider('bottom');
+
 
         const tables = d3.selectAll(`${this.selector} table.${className}`);
         const rows = d3.selectAll(d3.merge([this.left.rows.nodes(), this.right.rows.nodes()]));
