@@ -176,6 +176,20 @@ export default class extends Skeleton {
         }
     }
 
+    updateRightTable (roundIndex) {
+        const nextRoundResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
+
+        this.right.cells = this.right.cells
+            .data(result => this.right.columns.map(column => new Cell(column, nextRoundResults.get(result.item), this.params)))
+            .attr('class', cell => cell.classes.join(' '))
+            .each(function(cell) {
+                if (cell.color) {
+                    d3.select(this).style('color', cell.color)
+                }
+            })
+            .text(cell => cell.text);
+    }
+
     to (roundIndex) {
         if (roundIndex < 1 || roundIndex > this.data.meta.lastRound) {
             return Promise.reject(`Sorry we can't go to round #${roundIndex}`);
@@ -184,23 +198,11 @@ export default class extends Skeleton {
         const change = roundIndex - this.currentRound;
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
-        const nextRoundResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
-
-        const params = this.params;
-        this.table.selectAll('td.change')
-            .each(function (currentCell) {
-                const cell = new Cell(currentCell.column, nextRoundResults.get(currentCell.result.item), params);
-                if (cell.color) {
-                    d3.select(this).style('color', cell.color)
-                }
-
-                d3.select(this).text(cell.text);
-            });
+        this.updateRightTable(roundIndex);
 
         const duration = this.durations.scale(Math.abs(change));
         this.moveRightTable(duration);
         this.moveSlider(roundIndex, duration);
-
         return this.move(roundIndex, 0, duration);
     }
 
@@ -221,14 +223,7 @@ export default class extends Skeleton {
 
         this.dispatch.call('roundPreview', this, this.data.results[roundIndex].meta);
 
-        if (!previousPreviewedRound) {
-            this.right.table.classed('hidden', true);
-        }
-
-        [this.previewed.table, this.previewed.rows, this.previewed.cells] =
-            this.makeTable(this.data.results[roundIndex].results, 'main right', this.right.columns);
-        this.previewed.table.style('left', this.right.table.node().style.left);
-
+        this.updateRightTable(roundIndex);
         this.moveSlider(roundIndex);
 
         this.sparks.filter('.current')
@@ -240,27 +235,6 @@ export default class extends Skeleton {
             .style('background-color', cell => this.params.darkSparkColors[cell.result.outcome] || 'transparent');
 
         return Promise.resolve();
-    }
-
-    endPreview (move = false) {
-        const end = () => {
-            this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
-            return Promise.resolve();
-        };
-
-        if (this.previewedRound === null || this.previewedRound === this.currentRound) {
-            this.previewed.table.remove();
-            return end();
-        } else if (!move) {
-            this.previewed.table.remove();
-            this.right.table.classed('hidden', false);
-            return end();
-        } else {
-            this.right.table.remove();
-            this.right.table = this.previewed.table;
-            return Promise.resolve(this.to(this.previewedRound))
-                .then(end);
-        }
     }
 
     drillDown (item) {

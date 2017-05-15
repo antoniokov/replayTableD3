@@ -27,7 +27,6 @@ export default class {
         this.currentRound = params.startFromRound === null ? this.data.meta.lastRound : params.startFromRound;
         this.previewedRound = null;
         this.drilldown = {};
-        this.previewed = {};
 
         this.dispatch = d3.dispatch(...dispatchers);
         this.dispatch.on('roundChange', roundMeta => this.currentRound = roundMeta.index);
@@ -35,10 +34,7 @@ export default class {
         this.dispatch.on('pause', () => this.isPlaying = false);
 
         this.dispatch.on('roundPreview', roundMeta => this.previewedRound = roundMeta.index);
-        this.dispatch.on('endPreview', roundMeta => {
-            this.previewedRound = null;
-            this.previewed = {};
-        });
+        this.dispatch.on('endPreview', roundMeta => this.previewedRound = null);
         this.dispatch.on('drillDown', item => {
             this.tableContainer.classed('drilldowned', true);
             this.drilldown.item = item
@@ -161,5 +157,22 @@ export default class {
 
     pause () {
         this.dispatch.call('pause');
+    }
+
+    endPreview (move = false) {
+        const end = () => {
+            this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
+            return Promise.resolve();
+        };
+
+        if (this.previewedRound === null || this.previewedRound === this.currentRound) {
+            return end();
+        } else if (!move) {
+            return Promise.resolve(this.preview(this.currentRound))
+                .then(end);
+        } else {
+            return Promise.resolve(this.to(this.previewedRound))
+                .then(end);
+        }
     }
 };

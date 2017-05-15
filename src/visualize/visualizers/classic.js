@@ -88,23 +88,6 @@ export default class extends Skeleton {
         return Promise.resolve();
     }
 
-    endPreview (move = false) {
-        const end = () => {
-            this.dispatch.call('endPreview', this, this.data.results[this.currentRound].meta);
-            return Promise.resolve();
-        };
-
-        if (this.previewedRound === null || this.previewedRound === this.currentRound) {
-            return end();
-        } else if (!move) {
-            return Promise.resolve(this.preview(this.currentRound))
-                .then(end);
-        } else {
-            return Promise.resolve(this.to(this.previewedRound))
-                .then(end);
-        }
-    }
-
     drillDown (item) {
         this.dispatch.call('drillDown', this, item);
 
