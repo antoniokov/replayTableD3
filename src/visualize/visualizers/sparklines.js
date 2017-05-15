@@ -36,7 +36,7 @@ export default class extends Skeleton {
             .enter().append('tr')
             .attr('class', className.includes('left') ? 'left' : 'right');
 
-        const paramsEnriched = Object.assign({}, this.params, { currentRound: this.currentRound });
+        const paramsEnriched = Object.assign({ currentRound: this.currentRound }, this.params);
         const cells = rows.selectAll('td')
             .data(result => columns.map(column => new Cell(column, result, paramsEnriched)))
             .enter().append('td')
@@ -109,7 +109,15 @@ export default class extends Skeleton {
             .append('span')
             .attr('class', 'slider-toggle')
             .style('left', this.slider.left)
-            .text(this.data.results[this.currentRound].meta.name);
+            .text(this.data.results[this.currentRound].meta.name)
+            .call(d3.drag()
+                .on("drag", () => {
+                    const roundIndex = Math.round(this.slider.scale.invert(d3.event.x));
+                    this.moveRightTable(roundIndex);
+                    this.preview(roundIndex);
+                })
+                .on("end", () => this.endPreview(true))
+            );
     }
 
     moveSlider (roundIndex, duration = 0) {
@@ -136,18 +144,17 @@ export default class extends Skeleton {
         [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, `${className} left`, this.left.columns);
         [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, `${className} right`, this.right.columns);
 
-        this.moveRightTable();
+        this.moveRightTable(this.currentRound);
 
 
         const offsets = this.sparks.nodes().map(n => n.offsetLeft);
         const width = this.sparks.node().offsetWidth;
         const left = Math.min(...offsets);
-        const right = Math.max(...offsets) + width;
-
+        const right = Math.max(...offsets);
 
         this.slider.scale = d3.scaleLinear()
             .domain([1, this.data.meta.lastRound])
-            .range([width/2, right - left - width + 1])
+            .range([0, right - left])
             .clamp(true);
 
         this.slider.top = this.makeSlider('top');
@@ -161,9 +168,10 @@ export default class extends Skeleton {
         return [tables, rows, cells];
     }
 
-    moveRightTable (duration = 0) {
+    moveRightTable (roundIndex, duration = 0) {
         const previousValue = this.right.left;
-        const spark = this.left.table.select('.spark.current').node();
+        const spark = this.sparks.filter(cell => cell.roundIndex === roundIndex).node();
+        console.log(spark.offsetLeft, spark.offsetWidth);
         this.right.left = spark.offsetLeft + spark.offsetWidth;
 
         if (duration) {
@@ -195,13 +203,17 @@ export default class extends Skeleton {
             return Promise.reject(`Sorry we can't go to round #${roundIndex}`);
         }
 
+        if (roundIndex === this.currentRound) {
+            return Promise.resolve();
+        }
+
         const change = roundIndex - this.currentRound;
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
         this.updateRightTable(roundIndex);
 
         const duration = this.durations.scale(Math.abs(change));
-        this.moveRightTable(duration);
+        this.moveRightTable(roundIndex, duration);
         this.moveSlider(roundIndex, duration);
         return this.move(roundIndex, 0, duration);
     }
