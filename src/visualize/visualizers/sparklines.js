@@ -88,6 +88,7 @@ export default class extends Skeleton {
         this.sparks
             .append('span')
             .attr('class', 'spark-score muted')
+            .style('color', cell => this.params.colors[cell.result.outcome] || 'black')
             .text(cell => cell.result.match ? `${cell.result.match.score}:${cell.result.match.opponentScore}` : '');
     }
 
@@ -171,7 +172,6 @@ export default class extends Skeleton {
     moveRightTable (roundIndex, duration = 0) {
         const previousValue = this.right.left;
         const spark = this.sparks.filter(cell => cell.roundIndex === roundIndex).node();
-        console.log(spark.offsetLeft, spark.offsetWidth);
         this.right.left = spark.offsetLeft + spark.offsetWidth;
 
         if (duration) {
