@@ -86,20 +86,20 @@ export default class Cell {
         this.text = '';
         this.classes = ['spark'];
 
-        const roundIndex = Number.parseInt(column.split('.')[1]);
+        this.roundIndex = Number.parseInt(column.split('.')[1]);
         const itemResults = params.sparklinesData.get(result.item);
 
-        if (roundIndex >= itemResults.length) {
+        if (this.roundIndex >= itemResults.length) {
             this.backgroundColor = 'transparent';
             this.result = {};
         } else {
-            this.result = itemResults[roundIndex];
+            this.result = itemResults[this.roundIndex];
 
-            if (roundIndex === params.currentRound) {
+            if (this.roundIndex === params.currentRound) {
                 this.classes.push('current');
-                this.backgroundColor = params.darkSparkColors[itemResults[roundIndex].outcome] || 'transparent';
+                this.backgroundColor = params.darkSparkColors[itemResults[this.roundIndex].outcome] || 'transparent';
             } else {
-                this.backgroundColor = params.sparkColors[itemResults[roundIndex].outcome] || 'transparent';
+                this.backgroundColor = params.sparkColors[itemResults[this.roundIndex].outcome] || 'transparent';
             }
         }
 

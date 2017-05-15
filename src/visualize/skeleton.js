@@ -27,13 +27,18 @@ export default class {
         this.currentRound = params.startFromRound === null ? this.data.meta.lastRound : params.startFromRound;
         this.previewedRound = null;
         this.drilldown = {};
+        this.previewed = {};
 
         this.dispatch = d3.dispatch(...dispatchers);
         this.dispatch.on('roundChange', roundMeta => this.currentRound = roundMeta.index);
         this.dispatch.on('play', () => this.isPlaying = true);
         this.dispatch.on('pause', () => this.isPlaying = false);
+
         this.dispatch.on('roundPreview', roundMeta => this.previewedRound = roundMeta.index);
-        this.dispatch.on('endPreview', roundMeta => this.previewedRound = null);
+        this.dispatch.on('endPreview', roundMeta => {
+            this.previewedRound = null;
+            this.previewed = {};
+        });
         this.dispatch.on('drillDown', item => {
             this.tableContainer.classed('drilldowned', true);
             this.drilldown.item = item

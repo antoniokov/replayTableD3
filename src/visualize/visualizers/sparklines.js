@@ -69,8 +69,12 @@ export default class extends Skeleton {
 
     enrichSparks (table) {
         this.sparks = table.selectAll('td.spark')
-            .filter(cell => Number.parseInt(cell.column.split('.')[1]) <= this.data.meta.lastRound);
+            .filter(cell => cell.roundIndex <= this.data.meta.lastRound);
 
+        this.sparks
+            .on('mouseover', cell => this.preview(cell.roundIndex))
+            .on('mouseout', cell => this.endPreview(false))
+            .on('click', cell => this.endPreview(true));
 
         const top = d3.scaleLinear()
             .domain([1, this.data.results[0].results.length])
@@ -108,14 +112,15 @@ export default class extends Skeleton {
             .text(this.data.results[this.currentRound].meta.name);
     }
 
-    moveSlider (roundIndex, duration) {
+    moveSlider (roundIndex, duration = 0) {
         const previous = this.slider.left;
         this.slider.left =`${this.slider.scale(roundIndex)}px`;
         [this.slider.top, this.slider.bottom].map(slider => {
             slider
                 .transition()
                 .duration(duration)
-                .style('left', this.slider.left);
+                .style('left', this.slider.left)
+                .text(this.data.results[roundIndex].meta.name);
         });
     }
 
@@ -172,7 +177,7 @@ export default class extends Skeleton {
     }
 
     to (roundIndex) {
-        if (roundIndex < 0 || roundIndex > this.data.meta.lastRound) {
+        if (roundIndex < 1 || roundIndex > this.data.meta.lastRound) {
             return Promise.reject(`Sorry we can't go to round #${roundIndex}`);
         }
 
@@ -204,16 +209,35 @@ export default class extends Skeleton {
     }
 
     preview (roundIndex) {
+        if (roundIndex < 1 || roundIndex > this.data.meta.lastRound) {
+            return Promise.reject(`Sorry we can't preview round #${roundIndex}`);
+        }
+
+        const previousPreviewedRound = this.previewedRound;
+
+        if (previousPreviewedRound === roundIndex) {
+            return Promise.resolve();
+        }
+
         this.dispatch.call('roundPreview', this, this.data.results[roundIndex].meta);
 
-        this.rows = this.rows
-            .data(this.data.results[roundIndex].results, k => k.item);
+        if (!previousPreviewedRound) {
+            this.right.table.classed('hidden', true);
+        }
 
-        this.cells = this.rows.selectAll('td')
-            .data(result => this.params.columns.map(column => new Cell(column, result, this.params)))
-            .attr('class', cell => cell.classes.join(' '))
-            .style('background-color', cell => cell.backgroundColor || 'transparent')
-            .text(cell => cell.text);
+        [this.previewed.table, this.previewed.rows, this.previewed.cells] =
+            this.makeTable(this.data.results[roundIndex].results, 'main right', this.right.columns);
+        this.previewed.table.style('left', this.right.table.node().style.left);
+
+        this.moveSlider(roundIndex);
+
+        this.sparks.filter('.current')
+            .classed('current', false)
+            .style('background-color', cell => this.params.sparkColors[cell.result.outcome] || 'transparent');
+
+        this.sparks.filter(cell => cell.roundIndex === roundIndex)
+            .classed('current', true)
+            .style('background-color', cell => this.params.darkSparkColors[cell.result.outcome] || 'transparent');
 
         return Promise.resolve();
     }
@@ -225,11 +249,15 @@ export default class extends Skeleton {
         };
 
         if (this.previewedRound === null || this.previewedRound === this.currentRound) {
+            this.previewed.table.remove();
             return end();
         } else if (!move) {
-            return Promise.resolve(this.preview(this.currentRound))
-                .then(end);
+            this.previewed.table.remove();
+            this.right.table.classed('hidden', false);
+            return end();
         } else {
+            this.right.table.remove();
+            this.right.table = this.previewed.table;
             return Promise.resolve(this.to(this.previewedRound))
                 .then(end);
         }
