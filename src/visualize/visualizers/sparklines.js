@@ -141,6 +141,7 @@ export default class extends Skeleton {
         const sparks = Array.from({ length: this.roundsTotalNumber }, (v, i) => `spark.${i+1}`);
         this.left.columns = ['position', 'item', ...sparks];
         this.right.columns = ['score', 'opponent', 'points.change', 'equal', 'points', 'pointsLabel'];
+        this.right.drilldownColumns = ['score', 'opponent', 'wins', 'draws', 'losses', 'labeledPoints'];
 
         [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, `${className} left`, this.left.columns);
         [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, `${className} right`, this.right.columns);
@@ -185,16 +186,15 @@ export default class extends Skeleton {
     }
 
     updateRightTable (roundIndex) {
-        const nextRoundResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
+        if (roundIndex) {
+            this.right.rows.data(this.data.results[roundIndex].results, k => k.item);
+        }
 
+        const columns = this.drilldown.item ? this.right.drilldownColumns : this.right.columns;
         this.right.cells = this.right.cells
-            .data(result => this.right.columns.map(column => new Cell(column, nextRoundResults.get(result.item), this.params)))
+            .data(result => columns.map(column => new Cell(column, result, this.params)))
             .attr('class', cell => cell.classes.join(' '))
-            .each(function(cell) {
-                if (cell.color) {
-                    d3.select(this).style('color', cell.color)
-                }
-            })
+            .style('color', cell => cell.color)
             .text(cell => cell.text);
     }
 
@@ -205,6 +205,10 @@ export default class extends Skeleton {
 
         if (roundIndex === this.currentRound) {
             return Promise.resolve();
+        }
+
+        if (this.drilldown.item) {
+            this.endDrillDown();
         }
 
         const change = roundIndex - this.currentRound;
@@ -236,6 +240,7 @@ export default class extends Skeleton {
         this.dispatch.call('roundPreview', this, this.data.results[roundIndex].meta);
 
         this.updateRightTable(roundIndex);
+
         this.moveSlider(roundIndex);
 
         this.sparks.filter('.current')
@@ -265,6 +270,10 @@ export default class extends Skeleton {
         this.sparks.selectAll('.spark-score')
             .classed('muted', cell => !cell.result.match || cell.result.item === item || cell.result.match.opponent !== item);
 
+        this.updateRightTable();
+
+        this.right.rows.classed('muted', row => row.item !== item);
+
         return Promise.resolve();
     }
 
@@ -277,7 +286,11 @@ export default class extends Skeleton {
         this.sparks.selectAll('.spark-score')
             .classed('muted', true);
 
+        this.right.rows.classed('muted', false);
+
         this.dispatch.call('endDrillDown', this, null);
+        this.updateRightTable();
+
         return Promise.resolve();
     }
 };
@@ -306,6 +319,33 @@ class Cell extends skeletonCell {
     pointsLabel (result, params) {
         this.text = result.position.strict === 1 ? params.pointsLabel : '';
         this.classes = ['label', 'change'];
+        return this;
+    }
+
+    wins (result, params) {
+        this.text = `${result.wins.total} w.`;
+        this.classes = ['change'];
+        this.color = params.colors.win;
+        return this;
+    }
+
+    draws (result, params) {
+        this.text = `${result.draws.total} d.`;
+        this.classes = ['change'];
+        this.color = params.colors.draw;
+        return this;
+    }
+
+    losses (result, params) {
+        this.text = `${result.losses.total} l.`;
+        this.classes = ['change'];
+        this.color = params.colors.loss;
+        return this;
+    }
+
+    labeledPoints (result, params) {
+        this.text = `${result.points.total} points`;
+        this.classes = ['change'];
         return this;
     }
 

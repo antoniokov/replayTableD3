@@ -474,6 +474,14 @@ h1 {
 	visibility: hidden;
 }
 
+.replayTable .sparklines tr.muted {
+	visibility: hidden;
+}
+
+.replayTable .sparklines tr.muted > td.opponent {
+	font-size: 0px;
+}
+
 .replayTable  .main.right{
 	top: 6px;
 
