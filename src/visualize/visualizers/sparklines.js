@@ -118,8 +118,8 @@ export default class extends Skeleton {
 
     makeSlider (position = 'top') {
         const slider = position === 'top'
-            ? this.left.table.select('tbody').insert('tr', 'tr')
-            : this.left.table.select('tbody').append('tr');
+            ? this.sparks.table.select('tbody').insert('tr', 'tr')
+            : this.sparks.table.select('tbody').append('tr');
 
         slider
             .attr('class', `sparklines-slider ${position}`)
