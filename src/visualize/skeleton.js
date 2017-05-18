@@ -48,13 +48,16 @@ export default class {
 
         this.controlsContainer = d3.select(this.selector)
             .append('div')
-            .attr('class', 'controls-container');
+            .attr('class', `controls-container ${params.visualizer}`);
         this.controls = this.renderControls(this.controlsContainer, this.params.controls);
 
         this.tableContainer = d3.select(this.selector)
             .append('div')
             .attr('class', `table-container ${params.visualizer}`);
         [this.table, this.rows, this.cells] = this.renderTable(this.data.results[this.currentRound].results);
+        this.ys = this.rows.nodes().map(n => n.getBoundingClientRect().top);
+        this.initialPositions = this.data.results[this.currentRound].results
+            .reduce((obj, res) => Object.assign(obj, { [res.item]: res.position.strict - 1 }) , {});
     }
 
     renderControls(container, list) {
@@ -85,28 +88,23 @@ export default class {
         return controls;
     }
 
-    move (roundIndex, delay, duration) {
-        const [table, rows, cells] = this.renderTable(this.data.results[roundIndex].results, 'hidden');
-        const currentYs = getRowsYs(this.rows);
-        const nextYs = getRowsYs(rows);
+    move (roundIndex, delay, duration, cells = this.cells) {
+        const nextPositions = this.data.results[roundIndex].results
+            .reduce((obj, res) => Object.assign(obj, { [res.item]: res.position.strict - 1 }) , {});
 
         return new Promise((resolve, reject) => {
             let transitionsFinished = 0;
-            this.cells
-                .transition()
+            cells.transition()
                 .delay(delay)
                 .duration(duration)
-                .style('transform', (cell, i) => `translateY(${nextYs[cell.result.item] - currentYs[cell.result.item]}px)`)
+                .style('transform', cell => {
+                    const initialY = this.ys[this.initialPositions[cell.result.item]];
+                    const nextY = this.ys[nextPositions[cell.result.item]];
+                    return `translateY(${nextY - initialY}px)`;
+                })
                 .each(() => ++transitionsFinished)
                 .on('end', () => {
                     if (!--transitionsFinished) {
-                        this.table.remove();
-                        this.table = table.each(function (d,i) {
-                            const classes = d3.select(this).attr('class');
-                            d3.select(this).attr('class', classes.replace('hidden', 'main'));
-                        });
-                        this.rows = rows;
-                        this.cells = cells;
                         resolve();
                     }
                 });

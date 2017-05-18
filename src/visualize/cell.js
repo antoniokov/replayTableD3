@@ -97,7 +97,7 @@ export default class Cell {
 
             if (this.roundIndex === params.currentRound) {
                 this.classes.push('current');
-                this.backgroundColor = params.darkSparkColors[itemResults[this.roundIndex].outcome] || 'transparent';
+                this.backgroundColor = params.currentSparkColors[itemResults[this.roundIndex].outcome] || 'transparent';
             } else {
                 this.backgroundColor = params.sparkColors[itemResults[this.roundIndex].outcome] || 'transparent';
             }

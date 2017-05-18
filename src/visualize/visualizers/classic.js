@@ -4,11 +4,13 @@ import fromCamelCase from '../../helpers/general/from-camel-case';
 import getItemResults from '../../helpers/data/get-item-results';
 
 
+const headerlessColumns = ['outcome', 'match', 'round', 'score', 'opponent'];
+
 export default class extends Skeleton {
-    renderTable (data, className = 'main', columns = this.params.columns, labels = this.params.labels) {
+    renderTable (data, classes = ['main'], columns = this.params.columns, labels = this.params.labels) {
         const table = this.tableContainer
             .append('table')
-            .attr('class', className);
+            .attr('class', classes.join(' '));
 
         const thead = table.append('thead');
         thead.append('tr')
@@ -18,7 +20,7 @@ export default class extends Skeleton {
             .text((column, i) => {
                 if (labels[i]) {
                     return labels[i];
-                } else if (['outcome', 'match', 'round'].includes(column) || column.includes('.change')) {
+                } else if (headerlessColumns.includes(column) || column.includes('.change')) {
                     return '';
                 } else {
                     return fromCamelCase(column);
@@ -28,7 +30,8 @@ export default class extends Skeleton {
         const tbody = table.append('tbody');
         const rows = tbody.selectAll('tr')
             .data(data, k => k.item || k.roundMeta.index)
-            .enter().append('tr');
+            .enter().append('tr')
+            .attr('id', k => `replay-table-${k.item}`);
 
         const cells = rows.selectAll('td')
             .data(result => columns.map(column => new Cell(column, result, this.params)))
@@ -57,20 +60,30 @@ export default class extends Skeleton {
 
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
-        const nextRoundResults = new Map(this.data.results[roundIndex].results.map(result => [result.item, result]));
+        this.rows = this.rows
+            .data(this.data.results[roundIndex].results, k => k.item);
+
+        this.cells = this.cells
+            .data(result => this.params.columns.map(column => new Cell(column, result, this.params)));
 
         const animateOutcomes = this.params.columns.includes('outcome');
         if (animateOutcomes) {
             this.table.selectAll('td.outcome')
                 .transition()
                 .duration(this.durations.outcomes)
-                .style("background-color", cell => this.params.colors[nextRoundResults.get(cell.result.item).outcome] || 'transparent');
+                .style("background-color", cell => this.params.colors[cell.result.outcome] || 'transparent');
         }
 
-        this.table.selectAll('td.change')
-            .text(cell => new Cell(cell.column, nextRoundResults.get(cell.result.item), this.params).text);
+        this.cells.filter('.change')
+            .attr('class', cell => cell.classes.join(' '))
+            .text(cell => cell.text);
 
-        return this.move(roundIndex, animateOutcomes ? this.durations.outcomes : 0, this.durations.move);
+        return this.move(roundIndex, animateOutcomes ? this.durations.outcomes : 0, this.durations.move)
+            .then(() => {
+                this.cells.filter(':not(.change)')
+                    .attr('class', cell => cell.classes.join(' '))
+                    .text(cell => cell.text);
+            });
     }
 
     preview (roundIndex) {
@@ -115,7 +128,7 @@ export default class extends Skeleton {
         const itemData = getItemResults(this.data.results, item, true);
 
         this.table.classed('hidden', true);
-        [this.drilldown.table, this.drilldown.rows, this.drilldown.cells] = this.renderTable(itemData, 'drilldown', columns, labels);
+        [this.drilldown.table, this.drilldown.rows, this.drilldown.cells] = this.renderTable(itemData, ['drilldown'], columns, labels);
 
         return Promise.resolve();
     }

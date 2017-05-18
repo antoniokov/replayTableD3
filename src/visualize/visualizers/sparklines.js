@@ -1,52 +1,36 @@
 import Skeleton from '../skeleton';
 import skeletonCell from '../cell';
 import numberToChange from '../../helpers/general/number-to-change';
-import getItems from '../../helpers/data/get-items';
 import getItemResults from '../../helpers/data/get-item-results';
-import toCSS from '../../helpers/general/to-css';
 
 
 export default class extends Skeleton {
     constructor (data, params) {
-        const items = getItems(data.results);
-        const paramsEnriched = Object.assign({}, params, {
-            sparklinesData: new Map(items.map(item => [item, getItemResults(data.results, item)])),
-            darkSparkColors: {
-                'win': '#AAD579', //d3.color(params.sparkColors.win).darker(0.3),
-                'draw': '#CCCCCC', //d3.color(params.sparkColors.draw).darker(),
-                'loss': '#E89B77' //d3.color(params.sparkColors.loss).darker(),
-            }
-        });
-
-        super(data, paramsEnriched);
+        super(data, params);
 
         this.durations.scale = d3.scaleLinear()
             .domain([1, data.meta.lastRound])
             .range([this.durations.move, 1.5*this.durations.move]);
     }
 
-    makeTable (data, className, columns) {
+    makeTable (data, classes, columns) {
         const table = this.tableContainer
             .append('table')
-            .attr('class', className);
+            .attr('class', classes.join(' '));
 
         const tbody = table.append('tbody');
         const rows = tbody.selectAll('tr')
             .data(data, k => k.item)
-            .enter().append('tr')
-            .attr('class', className.includes('left') ? 'left' : 'right');
+            .enter().append('tr');
 
-        const paramsEnriched = Object.assign({ currentRound: this.currentRound }, this.params);
         const cells = rows.selectAll('td')
-            .data(result => columns.map(column => new Cell(column, result, paramsEnriched)))
+            .data(result => columns.map(column => new Cell(column, result, this.params)))
             .enter().append('td')
             .attr('class', cell => cell.classes.join(' '))
-            .each(function(cell) {
-                ['color', 'backgroundColor']
-                    .filter(property => cell.hasOwnProperty(property))
-                    .forEach(property => d3.select(this).style(toCSS(property), cell[property]));
-            })
-            .text(cell => cell.text)
+            .style('color', cell => cell.color)
+            .text(cell => cell.text);
+
+        cells.filter('.clickable')
             .on('click', cell => {
                 switch(cell.column) {
                     case 'item':
@@ -60,36 +44,76 @@ export default class extends Skeleton {
                 }
             });
 
-        if (className.includes('left')) {
-            this.enrichSparks(table);
-        }
-
         return [table, rows, cells];
     }
 
-    enrichSparks (table) {
-        this.sparks = table.selectAll('td.spark')
-            .filter(cell => cell.roundIndex <= this.data.meta.lastRound);
+    makeSparks (data) {
+        const table = this.tableContainer
+            .append('table')
+            .attr('class', 'sparks');
 
-        this.sparks
-            .on('mouseover', cell => this.preview(cell.roundIndex))
+        const tbody = table.append('tbody');
+
+        const sparksData = data.map(result => ({
+            item: result.item,
+            results: getItemResults(this.data.results, result.item)
+        }));
+
+        const rows = tbody.selectAll('tr')
+            .data(sparksData, k => k.item)
+            .enter().append('tr');
+
+        const cells = rows.selectAll('td')
+            .data(row => this.data.results.map((round, i) => ({
+                result: row.results[i],
+                roundMeta: row.results[i].roundMeta
+            })))
+            .enter().append('td')
+            .attr('class', cell => `spark ${cell.roundMeta.index === this.currentRound ? 'current' : ''}`)
+            .style('background-color', cell => {
+                if (cell.roundMeta.index === this.currentRound) {
+                    return this.params.currentSparkColors[cell.result.outcome] || 'transparent';
+                } else {
+                    return this.params.sparkColors[cell.result.outcome] || 'transparent';
+                }
+            })
+            .on('mouseover', cell => this.preview(cell.roundMeta.index))
             .on('mouseout', cell => this.endPreview(false))
             .on('click', cell => this.endPreview(true));
 
-        const top = d3.scaleLinear()
-            .domain([1, this.data.results[0].results.length])
+        const scale = d3.scaleLinear()
+            .domain([1, sparksData.length])
             .range([0, 100]);
 
-        this.sparks
+        cells
             .append('span')
             .attr('class', 'spark-position')
-            .style('top', cell => `${top(cell.result.position.strict)}%`);
+            .style('top', cell => `${scale(cell.result.position.strict)}%`);
 
-        this.sparks
+        cells
             .append('span')
             .attr('class', 'spark-score muted')
             .style('color', cell => this.params.colors[cell.result.outcome] || 'black')
             .text(cell => cell.result.match ? `${cell.result.match.score}:${cell.result.match.opponentScore}` : '');
+
+
+        const switchCurrent = roundMeta => {
+            this.sparks.cells
+                .classed('current', cell => cell.roundMeta.index === roundMeta.index)
+                .style('background-color', cell => {
+                    if (cell.roundMeta.index === roundMeta.index) {
+                        return this.params.currentSparkColors[cell.result.outcome] || 'transparent';
+                    } else {
+                        return this.params.sparkColors[cell.result.outcome] || 'transparent'
+                    }
+                });
+        };
+
+        this.dispatch.on('roundPreview.sparks', switchCurrent);
+        this.dispatch.on('roundChange.sparks', switchCurrent);
+
+
+        return [table, rows, cells];
     }
 
     makeSlider (position = 'top') {
@@ -105,15 +129,15 @@ export default class extends Skeleton {
             .attr('colspan', (d,i) => i === 2 ? this.roundsTotalNumber: null)
             .attr('class', (d,i) => i === 2 ? 'slider-cell' : null);
 
-        this.slider.left = `${this.slider.scale(this.currentRound)}px`;
+        const left = `${this.scale(this.currentRound)}px`;
         return slider.select('.slider-cell')
             .append('span')
             .attr('class', 'slider-toggle')
-            .style('left', this.slider.left)
+            .style('left', left)
             .text(this.data.results[this.currentRound].meta.name)
             .call(d3.drag()
                 .on("drag", () => {
-                    const roundIndex = Math.round(this.slider.scale.invert(d3.event.x));
+                    const roundIndex = Math.round(this.scale.invert(d3.event.x));
                     this.moveRightTable(roundIndex);
                     this.preview(roundIndex);
                 })
@@ -121,81 +145,34 @@ export default class extends Skeleton {
             );
     }
 
-    moveSlider (roundIndex, duration = 0) {
-        const previous = this.slider.left;
-        this.slider.left =`${this.slider.scale(roundIndex)}px`;
-        [this.slider.top, this.slider.bottom].map(slider => {
-            slider
-                .transition()
-                .duration(duration)
-                .style('left', this.slider.left)
-                .text(this.data.results[roundIndex].meta.name);
-        });
-    }
-
-    renderTable (data, className = 'main') {
+    renderTable (data, classes = ['main']) {
         this.left = {};
+        this.sparks = {};
         this.right = {};
         this.slider = {};
 
-        const sparks = Array.from({ length: this.roundsTotalNumber }, (v, i) => `spark.${i+1}`);
-        this.left.columns = ['position', 'item', ...sparks];
+        this.left.columns = ['position', 'item'];
         this.right.columns = ['score', 'opponent', 'points.change', 'equal', 'points', 'pointsLabel'];
         this.right.drilldownColumns = ['score', 'opponent', 'wins', 'draws', 'losses', 'labeledPoints'];
 
-        [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, `${className} left`, this.left.columns);
-        [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, `${className} right`, this.right.columns);
+        [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, [...classes, 'left'], this.left.columns);
+        [this.sparks.table, this.sparks.rows, this.sparks.cells] = this.makeSparks(data);
+        [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, [...classes, 'right'], this.right.columns);
+
+        this.scale = d3.scaleLinear()
+            .domain([1, this.data.meta.lastRound])
+            .range([0, this.sparks.rows.node().offsetWidth])
+            .clamp(true);
 
         this.moveRightTable(this.currentRound);
-
-
-        const offsets = this.sparks.nodes().map(n => n.offsetLeft);
-        const width = this.sparks.node().offsetWidth;
-        const left = Math.min(...offsets);
-        const right = Math.max(...offsets);
-
-        this.slider.scale = d3.scaleLinear()
-            .domain([1, this.data.meta.lastRound])
-            .range([0, right - left])
-            .clamp(true);
 
         this.slider.top = this.makeSlider('top');
         this.slider.bottom = this.makeSlider('bottom');
 
-
-        const tables = d3.selectAll(`${this.selector} table.${className}`);
-        const rows = d3.selectAll(d3.merge([this.left.rows.nodes(), this.right.rows.nodes()]));
-        const cells = rows.selectAll('td');
-
-        return [tables, rows, cells];
-    }
-
-    moveRightTable (roundIndex, duration = 0) {
-        const previousValue = this.right.left;
-        const spark = this.sparks.filter(cell => cell.roundIndex === roundIndex).node();
-        this.right.left = spark.offsetLeft + spark.offsetWidth;
-
-        if (duration) {
-            this.right.table
-                .transition()
-                .duration(duration)
-                .styleTween('left', () => d3.interpolateString(`${previousValue}px`, `${this.right.left}px`));
-        } else {
-            this.right.table.style('left', `${this.right.left}px`);
-        }
-    }
-
-    updateRightTable (roundIndex) {
-        if (roundIndex) {
-            this.right.rows.data(this.data.results[roundIndex].results, k => k.item);
-        }
-
-        const columns = this.drilldown.item ? this.right.drilldownColumns : this.right.columns;
-        this.right.cells = this.right.cells
-            .data(result => columns.map(column => new Cell(column, result, this.params)))
-            .attr('class', cell => cell.classes.join(' '))
-            .style('color', cell => cell.color)
-            .text(cell => cell.text);
+        return ['table', 'rows', 'cells'].map(el => {
+            const nodes = ['left', 'sparks', 'right'].map(part => this[part][el].nodes());
+            return d3.selectAll(d3.merge(nodes));
+        });
     }
 
     to (roundIndex) {
@@ -214,12 +191,48 @@ export default class extends Skeleton {
         const change = roundIndex - this.currentRound;
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
-        this.updateRightTable(roundIndex);
+        ['left', 'right'].forEach(side => {
+            this[side].rows
+                .data(this.data.results[roundIndex].results, k => k.item);
+
+            this[side].cells = this[side].cells
+                .data(result => this[side].columns.map(column => new Cell(column, result, this.params)));
+        });
+
+        this.right.cells.filter('.change')
+            .attr('class', cell => cell.classes.join(' '))
+            .style('color', cell => cell.color)
+            .text(cell => cell.text);
 
         const duration = this.durations.scale(Math.abs(change));
         this.moveRightTable(roundIndex, duration);
         this.moveSlider(roundIndex, duration);
-        return this.move(roundIndex, 0, duration);
+        return this.move(roundIndex, 0, duration)
+            .then(() => {
+                const merged = d3.merge([this.left.cells.nodes(), this.right.cells.filter(':not(.change)').nodes()]);
+                d3.selectAll(merged)
+                    .attr('class', cell => cell.classes.join(' '))
+                    .style('color', cell => cell.color)
+                    .text(cell => cell.text);
+            });
+    }
+
+    moveSlider (roundIndex, duration = 0) {
+        const left =`${this.scale(roundIndex)}px`;
+        [this.slider.top, this.slider.bottom].map(slider => {
+            slider
+                .transition()
+                .duration(duration)
+                .style('left', left)
+                .text(this.data.results[roundIndex].meta.name);
+        });
+    }
+
+    moveRightTable (roundIndex, duration = 0) {
+        this.right.table
+            .transition()
+            .duration(duration)
+            .style('left', `${this.scale(roundIndex)}px`);
     }
 
     first () {
@@ -238,18 +251,22 @@ export default class extends Skeleton {
         }
 
         this.dispatch.call('roundPreview', this, this.data.results[roundIndex].meta);
-
-        this.updateRightTable(roundIndex);
-
         this.moveSlider(roundIndex);
 
-        this.sparks.filter('.current')
-            .classed('current', false)
-            .style('background-color', cell => this.params.sparkColors[cell.result.outcome] || 'transparent');
+        ['left', 'right'].forEach(side => {
+            this[side].rows
+                .data(this.data.results[roundIndex].results, k => k.item);
 
-        this.sparks.filter(cell => cell.roundIndex === roundIndex)
-            .classed('current', true)
-            .style('background-color', cell => this.params.darkSparkColors[cell.result.outcome] || 'transparent');
+            const columns = !this.drilldown.item
+                ? this[side].columns
+                : side === 'right' ? this.right.drilldownColumns : this.left.columns;
+
+            this[side].cells = this[side].cells
+                .data(result => columns.map(column => new Cell(column, result, this.params)))
+                .attr('class', cell => cell.classes.join(' '))
+                .style('color', cell => cell.color)
+                .text(cell => cell.text);
+        });
 
         return Promise.resolve();
     }
@@ -264,15 +281,19 @@ export default class extends Skeleton {
                 .text(this.params.allLabel);
         }
 
-        this.sparks
-            .classed('muted', cell => !cell.result.match || (cell.result.item !== item && cell.result.match.opponent !== item));
-
-        this.sparks.selectAll('.spark-score')
-            .classed('muted', cell => !cell.result.match || cell.result.item === item || cell.result.match.opponent !== item);
-
-        this.updateRightTable();
+        this.right.cells
+            .data(result => this.right.drilldownColumns.map(column => new Cell(column, result, this.params)))
+            .attr('class', cell => cell.classes.join(' '))
+            .style('color', cell => cell.color)
+            .text(cell => cell.text);
 
         this.right.rows.classed('muted', row => row.item !== item);
+
+        this.sparks.cells
+            .classed('muted', cell => !cell.result.match || (cell.result.item !== item && cell.result.match.opponent !== item));
+
+        this.sparks.cells.filter('.spark-score')
+            .classed('muted', cell => !cell.result.match || cell.result.item === item || cell.result.match.opponent !== item);
 
         return Promise.resolve();
     }
@@ -281,15 +302,20 @@ export default class extends Skeleton {
         this.drilldown.controls.remove();
         this.drilldown.controls = null;
 
-        this.sparks.classed('muted', false);
+        this.sparks.cells.classed('muted', false);
 
-        this.sparks.selectAll('.spark-score')
+        this.sparks.cells.filter('.spark-score')
             .classed('muted', true);
+
+        this.right.cells
+            .data(result => this.right.columns.map(column => new Cell(column, result, this.params)))
+            .attr('class', cell => cell.classes.join(' '))
+            .style('color', cell => cell.color)
+            .text(cell => cell.text);
 
         this.right.rows.classed('muted', false);
 
         this.dispatch.call('endDrillDown', this, null);
-        this.updateRightTable();
 
         return Promise.resolve();
     }
@@ -312,13 +338,13 @@ class Cell extends skeletonCell {
 
     equal (result, params) {
         this.text = result.position.strict === 1 ? '=' : '';
-        this.classes = ['label', 'change'];
+        this.classes = ['label'];
         return this;
     }
 
     pointsLabel (result, params) {
         this.text = result.position.strict === 1 ? params.pointsLabel : '';
-        this.classes = ['label', 'change'];
+        this.classes = ['label'];
         return this;
     }
 
@@ -331,21 +357,21 @@ class Cell extends skeletonCell {
 
     draws (result, params) {
         this.text = `${result.draws.total} d.`;
-        this.classes = ['change'];
+        this.classes = ['calculation'];
         this.color = params.colors.draw;
         return this;
     }
 
     losses (result, params) {
         this.text = `${result.losses.total} l.`;
-        this.classes = ['change'];
+        this.classes = ['calculation'];
         this.color = params.colors.loss;
         return this;
     }
 
     labeledPoints (result, params) {
         this.text = `${result.points.total} points`;
-        this.classes = ['change'];
+        this.classes = ['calculation'];
         return this;
     }
 

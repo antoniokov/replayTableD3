@@ -35,6 +35,18 @@ export default {
             value => isString(value))
     },
 
+    currentSparkColors: {
+        default: {
+            'win': '#AAD579',
+            'draw': '#CCCCCC',
+            'loss': '#E89B77'
+        },
+        parse: parseObject,
+        validate: obj => validateObject(obj,
+            key => ['win', 'draw', 'loss'].includes(key),
+            value => isString(value))
+    },
+
     pointsLabel: {
         default: 'points',
         parse: input => input,
