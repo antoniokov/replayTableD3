@@ -2,6 +2,8 @@ import Skeleton from '../skeleton';
 import skeletonCell from '../cell';
 import numberToChange from '../../helpers/general/number-to-change';
 import getItemResults from '../../helpers/data/get-item-results';
+import getSparkColor from '../helpers/sparklines/get-spark-color';
+import getSparkClasses from '../helpers/sparklines/get-spark-classes';
 
 
 export default class extends Skeleton {
@@ -63,20 +65,15 @@ export default class extends Skeleton {
             .data(sparksData, k => k.item)
             .enter().append('tr');
 
+
         const cells = rows.selectAll('td')
             .data(row => this.data.results.slice(1).map((round, i) => ({
                 result: row.results[i+1],
                 roundMeta: row.results[i+1].roundMeta
             })))
             .enter().append('td')
-            .attr('class', cell => `spark ${cell.roundMeta.index === this.currentRound ? 'current' : ''}`)
-            .style('background-color', cell => {
-                if (cell.roundMeta.index === this.currentRound) {
-                    return this.params.currentSparkColors[cell.result.outcome] || 'transparent';
-                } else {
-                    return this.params.sparkColors[cell.result.outcome] || 'transparent';
-                }
-            })
+            .attr('class', cell => getSparkClasses(cell, this.currentRound))
+            .style('background-color', cell => getSparkColor(cell, this.currentRound, this.params))
             .on('mouseover', cell => this.preview(cell.roundMeta.index))
             .on('mouseout', cell => this.endPreview(false))
             .on('click', cell => this.endPreview(true));
@@ -96,22 +93,15 @@ export default class extends Skeleton {
             .style('color', cell => this.params.colors[cell.result.outcome] || 'black')
             .text(cell => cell.result.match ? `${cell.result.match.score}:${cell.result.match.opponentScore}` : '');
 
+        cells.filter(cell => cell.roundMeta.index > this.currentRound)
+            .classed('overlapped', true);
 
-        const switchCurrent = roundMeta => {
+
+        this.dispatch.on('roundPreview.sparks', roundMeta => {
             this.sparks.cells
                 .classed('current', cell => cell.roundMeta.index === roundMeta.index)
-                .style('background-color', cell => {
-                    if (cell.roundMeta.index === roundMeta.index) {
-                        return this.params.currentSparkColors[cell.result.outcome] || 'transparent';
-                    } else {
-                        return this.params.sparkColors[cell.result.outcome] || 'transparent'
-                    }
-                });
-        };
-
-        this.dispatch.on('roundPreview.sparks', switchCurrent);
-        this.dispatch.on('roundChange.sparks', switchCurrent);
-
+                .style('background-color', cell => getSparkColor(cell, roundMeta.index, this.params));
+        });
 
         return [table, rows, cells];
     }
@@ -123,11 +113,9 @@ export default class extends Skeleton {
 
         slider
             .attr('class', `sparklines-slider ${position}`)
-            .selectAll('td')
-            .data(this.left.columns.slice(0, 3))
-            .enter().append('td')
-            .attr('colspan', (d,i) => i === 2 ? this.roundsTotalNumber: null)
-            .attr('class', (d,i) => i === 2 ? 'slider-cell' : null);
+            .append('td')
+            .attr('class', 'slider-cell')
+            .attr('colspan', this.roundsTotalNumber);
 
         const left = `${this.scale(this.currentRound)}px`;
         return slider.select('.slider-cell')
@@ -159,9 +147,11 @@ export default class extends Skeleton {
         [this.sparks.table, this.sparks.rows, this.sparks.cells] = this.makeSparks(data);
         [this.right.table, this.right.rows, this.right.cells] = this.makeTable(data, [...classes, 'right'], this.right.columns);
 
+        this.sparks.width = this.sparks.rows.node().offsetWidth - this.sparks.cells.node().offsetWidth;
+
         this.scale = d3.scaleLinear()
             .domain([1, this.data.meta.lastRound])
-            .range([0, this.sparks.rows.node().offsetWidth])
+            .range([0, this.sparks.width])
             .clamp(true);
 
         this.moveRightTable(this.currentRound);
@@ -232,7 +222,12 @@ export default class extends Skeleton {
         this.right.table
             .transition()
             .duration(duration)
-            .style('left', `${this.scale(roundIndex)}px`);
+            .style('left', `-${this.sparks.width - this.scale(roundIndex)}px`);
+
+        this.sparks.cells
+            .attr('class', cell => getSparkClasses(cell, roundIndex))
+            .transition(duration)
+            .style('background-color', cell => getSparkColor(cell, roundIndex, this.params));
     }
 
     first () {
@@ -292,7 +287,7 @@ export default class extends Skeleton {
         this.sparks.cells
             .classed('muted', cell => !cell.result.match || (cell.result.item !== item && cell.result.match.opponent !== item));
 
-        this.sparks.cells.filter('.spark-score')
+        this.sparks.cells.selectAll('.spark-score')
             .classed('muted', cell => !cell.result.match || cell.result.item === item || cell.result.match.opponent !== item);
 
         return Promise.resolve();
@@ -304,7 +299,7 @@ export default class extends Skeleton {
 
         this.sparks.cells.classed('muted', false);
 
-        this.sparks.cells.filter('.spark-score')
+        this.sparks.cells.selectAll('.spark-score')
             .classed('muted', true);
 
         this.right.cells
