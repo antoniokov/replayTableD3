@@ -64,9 +64,9 @@ export default class extends Skeleton {
             .enter().append('tr');
 
         const cells = rows.selectAll('td')
-            .data(row => this.data.results.map((round, i) => ({
-                result: row.results[i],
-                roundMeta: row.results[i].roundMeta
+            .data(row => this.data.results.slice(1).map((round, i) => ({
+                result: row.results[i+1],
+                roundMeta: row.results[i+1].roundMeta
             })))
             .enter().append('td')
             .attr('class', cell => `spark ${cell.roundMeta.index === this.currentRound ? 'current' : ''}`)
