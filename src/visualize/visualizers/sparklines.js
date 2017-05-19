@@ -13,6 +13,8 @@ export default class extends Skeleton {
         this.durations.scale = d3.scaleLinear()
             .domain([1, data.meta.lastRound])
             .range([this.durations.move, 1.5*this.durations.move]);
+
+        ['right', 'slider', 'sparks'].forEach(el => this[el].roundIndex = this.currentRound);
     }
 
     makeTable (data, classes, columns) {
@@ -99,8 +101,11 @@ export default class extends Skeleton {
 
         this.dispatch.on('roundPreview.sparks', roundMeta => {
             this.sparks.cells
-                .classed('current', cell => cell.roundMeta.index === roundMeta.index)
-                .style('background-color', cell => getSparkColor(cell, roundMeta.index, this.params));
+                .attr('class', cell => getSparkClasses(cell, roundMeta.index))
+                .style('background-color', cell => getSparkColor(cell, roundMeta.index, this.params))
+                .style('opacity', cell => cell.roundMeta.index > roundMeta.index ? 0.3 : 1);
+
+            this.sparks.roundIndex = roundMeta.index;
         });
 
         return [table, rows, cells];
@@ -159,6 +164,25 @@ export default class extends Skeleton {
         this.slider.top = this.makeSlider('top');
         this.slider.bottom = this.makeSlider('bottom');
 
+        this.right.table.call(d3.drag()
+            .on("start", () => {
+                this.right.drag = {
+                    x: d3.event.x,
+                    roundIndex: this.right.roundIndex
+                };
+            })
+            .on("drag", () => {
+                const difference = Math.abs(this.right.drag.x - d3.event.x);
+                const sign = Math.sign(this.right.drag.x - d3.event.x);
+                const index = this.right.drag.roundIndex - sign*Math.round(this.scale.invert(difference)) + 1;
+                const roundIndex = Math.min(Math.max(index, 1), this.data.meta.lastRound);
+
+                this.moveRightTable(roundIndex);
+                this.preview(roundIndex);
+            })
+            .on("end", () => this.endPreview(true))
+        );
+
         return ['table', 'rows', 'cells'].map(el => {
             const nodes = ['left', 'sparks', 'right'].map(part => this[part][el].nodes());
             return d3.selectAll(d3.merge(nodes));
@@ -194,10 +218,21 @@ export default class extends Skeleton {
             .style('color', cell => cell.color)
             .text(cell => cell.text);
 
+
+
+        const preAnimations = ['right', 'slider', 'sparks']
+            .filter(element => this[element].roundIndex !== this.currentRound);
+
+        preAnimations.forEach(element => {
+            return {
+                right: this.moveRightTable,
+                slider: this.moveSlider,
+                sparks: this.moveSparks
+            }[element].bind(this)(roundIndex, this.durations.pre)
+        });
+
         const duration = this.durations.scale(Math.abs(change));
-        this.moveRightTable(roundIndex, duration);
-        this.moveSlider(roundIndex, duration);
-        return this.move(roundIndex, 0, duration)
+        return this.move(roundIndex, preAnimations.length ? this.durations.pre : 0, duration)
             .then(() => {
                 const merged = d3.merge([this.left.cells.nodes(), this.right.cells.filter(':not(.change)').nodes()]);
                 d3.selectAll(merged)
@@ -214,7 +249,8 @@ export default class extends Skeleton {
                 .transition()
                 .duration(duration)
                 .style('left', left)
-                .text(this.data.results[roundIndex].meta.name);
+                .text(this.data.results[roundIndex].meta.name)
+                .on('end', () => this.slider.roundIndex = roundIndex);
         });
     }
 
@@ -222,12 +258,18 @@ export default class extends Skeleton {
         this.right.table
             .transition()
             .duration(duration)
-            .style('left', `-${this.sparks.width - this.scale(roundIndex)}px`);
+            .style('left', `-${this.sparks.width - this.scale(roundIndex)}px`)
+            .on('end', () => this.right.roundIndex = roundIndex);
+    }
 
+    moveSparks (roundIndex, duration = 0) {
         this.sparks.cells
             .attr('class', cell => getSparkClasses(cell, roundIndex))
-            .transition(duration)
-            .style('background-color', cell => getSparkColor(cell, roundIndex, this.params));
+            .transition()
+            .duration(duration)
+            .style('background-color', cell => getSparkColor(cell, roundIndex, this.params))
+            .style('opacity', cell => cell.roundMeta.index > roundIndex ? 0.3 : 1)
+            .on('end', () => this.sparks.roundIndex = roundIndex);
     }
 
     first () {
@@ -246,6 +288,7 @@ export default class extends Skeleton {
         }
 
         this.dispatch.call('roundPreview', this, this.data.results[roundIndex].meta);
+
         this.moveSlider(roundIndex);
 
         ['left', 'right'].forEach(side => {

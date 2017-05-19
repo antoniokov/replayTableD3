@@ -11,6 +11,18 @@ export default {
         validate: value => validateArray(value, value => controls.hasOwnProperty(value))
     },
 
+    durations: {
+        default: {
+            move: 1000,
+            freeze: 750,
+            pre: 750
+        },
+        parse: parseObject,
+        validate: obj => validateObject(obj,
+            key => ['move', 'freeze', 'pre'].includes(key),
+            value => !Number.isNaN(value) && value >= 0)
+    },
+
     colors: {
         default: {
             'win': '#ACE680',
