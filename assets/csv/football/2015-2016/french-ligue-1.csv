@@ -1,0 +1,381 @@
+﻿Date,HomeTeam,FTHG,AwayTeam,FTAG
+07.08.2015,Lille,0,Paris SG,1
+08.08.2015,Bastia,2,Rennes,1
+08.08.2015,Marseille,0,Caen,1
+08.08.2015,Montpellier,0,Angers,2
+08.08.2015,Nantes,1,Guingamp,0
+08.08.2015,Nice,1,Monaco,2
+08.08.2015,Troyes,0,Ajaccio GFCO,0
+09.08.2015,Bordeaux,1,Reims,2
+09.08.2015,Lyon,0,Lorient,0
+09.08.2015,Toulouse,2,St Etienne,1
+14.08.2015,Monaco,0,Lille,0
+15.08.2015,Angers,0,Nantes,0
+15.08.2015,Caen,1,Toulouse,0
+15.08.2015,Guingamp,0,Lyon,1
+15.08.2015,Rennes,1,Montpellier,0
+15.08.2015,St Etienne,1,Bordeaux,1
+15.08.2015,Troyes,3,Nice,3
+16.08.2015,Lorient,1,Bastia,1
+16.08.2015,Paris SG,2,Ajaccio GFCO,0
+16.08.2015,Reims,1,Marseille,0
+21.08.2015,Montpellier,0,Paris SG,1
+22.08.2015,Ajaccio GFCO,0,Angers,2
+22.08.2015,Bastia,3,Guingamp,0
+22.08.2015,Lyon,1,Rennes,2
+22.08.2015,Nantes,1,Reims,0
+22.08.2015,Nice,2,Caen,1
+22.08.2015,Toulouse,1,Monaco,1
+23.08.2015,Lille,0,Bordeaux,0
+23.08.2015,Lorient,0,St Etienne,1
+23.08.2015,Marseille,6,Troyes,0
+28.08.2015,Guingamp,2,Marseille,0
+29.08.2015,Angers,1,Nice,1
+29.08.2015,Caen,0,Lyon,4
+29.08.2015,Lille,1,Ajaccio GFCO,0
+29.08.2015,Reims,4,Lorient,1
+29.08.2015,Rennes,3,Toulouse,1
+29.08.2015,Troyes,0,Montpellier,0
+30.08.2015,Bordeaux,2,Nantes,0
+30.08.2015,Monaco,0,Paris SG,3
+30.08.2015,St Etienne,2,Bastia,1
+11.09.2015,Paris SG,2,Bordeaux,2
+12.09.2015,Lorient,3,Angers,1
+12.09.2015,Lyon,0,Lille,0
+12.09.2015,Montpellier,1,St Etienne,2
+12.09.2015,Nice,0,Guingamp,1
+12.09.2015,Toulouse,2,Reims,2
+12.09.2015,Troyes,1,Caen,3
+13.09.2015,Ajaccio GFCO,0,Monaco,1
+13.09.2015,Marseille,4,Bastia,1
+13.09.2015,Nantes,0,Rennes,2
+18.09.2015,Rennes,1,Lille,1
+19.09.2015,Angers,1,Troyes,0
+19.09.2015,Bastia,1,Nice,3
+19.09.2015,Caen,2,Montpellier,1
+19.09.2015,Guingamp,2,Ajaccio GFCO,1
+19.09.2015,Reims,1,Paris SG,1
+20.09.2015,Bordeaux,1,Toulouse,1
+20.09.2015,Marseille,1,Lyon,1
+20.09.2015,Monaco,2,Lorient,3
+20.09.2015,St Etienne,2,Nantes,0
+22.09.2015,Angers,0,Reims,0
+22.09.2015,Paris SG,3,Guingamp,0
+23.09.2015,Ajaccio GFCO,1,Rennes,1
+23.09.2015,Lorient,2,Caen,0
+23.09.2015,Lyon,2,Bastia,0
+23.09.2015,Nice,6,Bordeaux,1
+23.09.2015,Toulouse,1,Marseille,1
+23.09.2015,Troyes,0,St Etienne,1
+24.09.2015,Montpellier,2,Monaco,3
+25.09.2015,Reims,1,Lille,0
+26.09.2015,Bastia,3,Toulouse,0
+26.09.2015,Bordeaux,3,Lyon,1
+26.09.2015,Caen,2,Ajaccio GFCO,0
+26.09.2015,Nantes,1,Paris SG,4
+26.09.2015,Rennes,1,Troyes,1
+27.09.2015,Guingamp,3,Monaco,3
+27.09.2015,Marseille,1,Angers,2
+27.09.2015,Montpellier,2,Lorient,1
+27.09.2015,St Etienne,1,Nice,4
+29.09.2015,Lille,0,Nantes,1
+02.10.2015,Lille,2,Montpellier,0
+03.10.2015,Ajaccio GFCO,2,Toulouse,2
+03.10.2015,Angers,1,Bastia,0
+03.10.2015,Lyon,1,Reims,0
+03.10.2015,Troyes,0,Guingamp,1
+04.10.2015,Caen,1,St Etienne,0
+04.10.2015,Lorient,3,Bordeaux,2
+04.10.2015,Monaco,1,Rennes,1
+04.10.2015,Paris SG,2,Marseille,1
+16.10.2015,Monaco,1,Lyon,1
+17.10.2015,Bastia,0,Paris SG,2
+17.10.2015,Guingamp,1,Lille,1
+17.10.2015,Nantes,3,Troyes,0
+17.10.2015,Reims,0,Caen,1
+17.10.2015,St Etienne,2,Ajaccio GFCO,0
+17.10.2015,Toulouse,1,Angers,2
+18.10.2015,Bordeaux,0,Montpellier,0
+18.10.2015,Marseille,1,Lorient,1
+18.10.2015,Rennes,1,Nice,4
+23.10.2015,Caen,0,Nantes,2
+23.10.2015,Lyon,3,Toulouse,0
+24.10.2015,Ajaccio GFCO,3,Nice,1
+24.10.2015,Angers,0,Guingamp,0
+24.10.2015,Lorient,1,Rennes,1
+24.10.2015,Montpellier,2,Bastia,0
+25.10.2015,Bordeaux,1,Troyes,0
+25.10.2015,Lille,1,Marseille,2
+25.10.2015,Paris SG,4,St Etienne,1
+25.10.2015,Reims,0,Monaco,1
+30.10.2015,Rennes,0,Paris SG,1
+31.10.2015,Ajaccio GFCO,2,Bordeaux,0
+31.10.2015,Bastia,1,Caen,0
+31.10.2015,Guingamp,2,Lorient,2
+31.10.2015,St Etienne,3,Reims,0
+31.10.2015,Toulouse,1,Montpellier,1
+31.10.2015,Troyes,0,Lyon,1
+01.11.2015,Monaco,1,Angers,0
+01.11.2015,Nantes,0,Marseille,1
+01.11.2015,Nice,0,Lille,0
+04.11.2015,Nice,1,Nantes,2
+06.11.2015,Angers,0,Rennes,2
+07.11.2015,Caen,2,Guingamp,1
+07.11.2015,Lille,1,Bastia,1
+07.11.2015,Lorient,4,Troyes,1
+07.11.2015,Montpellier,2,Nantes,1
+07.11.2015,Paris SG,5,Toulouse,0
+07.11.2015,Reims,1,Ajaccio GFCO,2
+08.11.2015,Bordeaux,3,Monaco,1
+08.11.2015,Lyon,3,St Etienne,0
+08.11.2015,Marseille,0,Nice,1
+20.11.2015,Nice,3,Lyon,0
+21.11.2015,Guingamp,2,Toulouse,0
+21.11.2015,Lorient,1,Paris SG,2
+21.11.2015,Monaco,1,Nantes,0
+21.11.2015,Montpellier,3,Reims,1
+21.11.2015,Troyes,1,Lille,1
+22.11.2015,Bastia,1,Ajaccio GFCO,2
+22.11.2015,Caen,0,Angers,0
+22.11.2015,Rennes,2,Bordeaux,2
+22.11.2015,St Etienne,0,Marseille,2
+27.11.2015,Lyon,2,Montpellier,4
+28.11.2015,Ajaccio GFCO,1,Lorient,1
+28.11.2015,Angers,2,Lille,0
+28.11.2015,Nantes,0,Bastia,0
+28.11.2015,Paris SG,4,Troyes,1
+28.11.2015,Reims,2,Rennes,2
+28.11.2015,Toulouse,2,Nice,0
+29.11.2015,Bordeaux,1,Caen,4
+29.11.2015,Marseille,3,Monaco,3
+29.11.2015,St Etienne,3,Guingamp,0
+01.12.2015,Angers,0,Paris SG,0
+01.12.2015,Lorient,0,Nice,0
+01.12.2015,Nantes,0,Lyon,0
+02.12.2015,Bastia,1,Bordeaux,0
+02.12.2015,Guingamp,1,Reims,2
+02.12.2015,Lille,1,St Etienne,0
+02.12.2015,Monaco,1,Caen,1
+02.12.2015,Montpellier,0,Ajaccio GFCO,2
+02.12.2015,Troyes,0,Toulouse,3
+03.12.2015,Rennes,0,Marseille,1
+04.12.2015,Nice,0,Paris SG,3
+05.12.2015,Ajaccio GFCO,1,Nantes,1
+05.12.2015,Bastia,1,Monaco,2
+05.12.2015,Caen,1,Lille,2
+05.12.2015,Lyon,0,Angers,2
+05.12.2015,Reims,1,Troyes,1
+05.12.2015,Toulouse,2,Lorient,3
+06.12.2015,Bordeaux,1,Guingamp,0
+06.12.2015,Marseille,2,Montpellier,2
+06.12.2015,St Etienne,1,Rennes,1
+11.12.2015,Rennes,1,Caen,1
+12.12.2015,Lille,3,Lorient,0
+12.12.2015,Montpellier,2,Guingamp,1
+12.12.2015,Nantes,1,Toulouse,1
+12.12.2015,Reims,1,Nice,1
+12.12.2015,Troyes,1,Bastia,1
+13.12.2015,Angers,1,Bordeaux,1
+13.12.2015,Marseille,1,Ajaccio GFCO,1
+13.12.2015,Monaco,1,St Etienne,0
+13.12.2015,Paris SG,5,Lyon,1
+18.12.2015,Nice,1,Montpellier,0
+19.12.2015,Bastia,2,Reims,0
+19.12.2015,Caen,0,Paris SG,3
+19.12.2015,Guingamp,0,Rennes,2
+19.12.2015,Lorient,0,Nantes,0
+19.12.2015,Toulouse,1,Lille,1
+19.12.2015,Troyes,0,Monaco,0
+20.12.2015,Ajaccio GFCO,2,Lyon,1
+20.12.2015,Bordeaux,1,Marseille,1
+20.12.2015,St Etienne,1,Angers,0
+08.01.2016,Paris SG,2,Bastia,0
+09.01.2016,Angers,2,Caen,0
+09.01.2016,Lyon,4,Troyes,1
+09.01.2016,Monaco,2,Ajaccio GFCO,2
+09.01.2016,Montpellier,0,Bordeaux,1
+09.01.2016,Reims,1,Toulouse,3
+09.01.2016,Rennes,2,Lorient,2
+10.01.2016,Lille,1,Nice,1
+10.01.2016,Marseille,0,Guingamp,0
+10.01.2016,Nantes,2,St Etienne,1
+15.01.2016,Nice,2,Angers,1
+16.01.2016,Ajaccio GFCO,2,Reims,2
+16.01.2016,Bastia,1,Montpellier,0
+16.01.2016,Bordeaux,1,Lille,0
+16.01.2016,Guingamp,2,Nantes,2
+16.01.2016,Toulouse,0,Paris SG,1
+16.01.2016,Troyes,2,Rennes,4
+17.01.2016,Caen,1,Marseille,3
+17.01.2016,Lorient,0,Monaco,2
+17.01.2016,St Etienne,1,Lyon,0
+22.01.2016,Rennes,1,Ajaccio GFCO,0
+23.01.2016,Guingamp,1,Bastia,0
+23.01.2016,Lille,1,Troyes,3
+23.01.2016,Montpellier,1,Caen,2
+23.01.2016,Nantes,2,Bordeaux,2
+23.01.2016,Nice,2,Lorient,1
+23.01.2016,Paris SG,5,Angers,1
+24.01.2016,Lyon,1,Marseille,1
+24.01.2016,Monaco,4,Toulouse,0
+24.01.2016,Reims,1,St Etienne,1
+29.01.2016,Marseille,1,Lille,1
+30.01.2016,Ajaccio GFCO,0,Montpellier,4
+30.01.2016,Angers,3,Monaco,0
+30.01.2016,Bastia,1,Lyon,0
+30.01.2016,Lorient,2,Reims,0
+30.01.2016,Toulouse,1,Guingamp,2
+30.01.2016,Troyes,0,Nantes,1
+31.01.2016,Bordeaux,4,Rennes,0
+31.01.2016,Caen,2,Nice,0
+31.01.2016,St Etienne,0,Paris SG,2
+02.02.2016,Monaco,2,Bastia,0
+02.02.2016,Montpellier,0,Marseille,1
+03.02.2016,Guingamp,4,Troyes,0
+03.02.2016,Lille,1,Caen,0
+03.02.2016,Lyon,3,Bordeaux,0
+03.02.2016,Nantes,3,Ajaccio GFCO,1
+03.02.2016,Nice,1,Toulouse,0
+03.02.2016,Paris SG,3,Lorient,1
+03.02.2016,Reims,2,Angers,1
+04.02.2016,Rennes,0,St Etienne,1
+06.02.2016,Ajaccio GFCO,0,Guingamp,0
+06.02.2016,Angers,0,Lyon,3
+06.02.2016,Bastia,2,Troyes,0
+06.02.2016,Caen,0,Reims,2
+06.02.2016,Lorient,1,Montpellier,1
+06.02.2016,Monaco,1,Nice,0
+06.02.2016,Toulouse,0,Nantes,0
+07.02.2016,Bordeaux,1,St Etienne,4
+07.02.2016,Lille,1,Rennes,1
+07.02.2016,Marseille,1,Paris SG,2
+12.02.2016,Rennes,1,Angers,0
+13.02.2016,Ajaccio GFCO,2,Troyes,3
+13.02.2016,Guingamp,2,Bordeaux,4
+13.02.2016,Montpellier,2,Toulouse,0
+13.02.2016,Nantes,2,Lorient,1
+13.02.2016,Paris SG,0,Lille,0
+13.02.2016,Reims,0,Bastia,1
+14.02.2016,Lyon,4,Caen,1
+14.02.2016,Nice,1,Marseille,1
+14.02.2016,St Etienne,1,Monaco,1
+19.02.2016,Bordeaux,0,Nice,0
+20.02.2016,Angers,2,Montpellier,3
+20.02.2016,Lorient,4,Guingamp,3
+20.02.2016,Monaco,3,Troyes,1
+20.02.2016,Paris SG,4,Reims,1
+20.02.2016,Toulouse,1,Ajaccio GFCO,1
+21.02.2016,Caen,1,Rennes,0
+21.02.2016,Lille,1,Lyon,0
+21.02.2016,Marseille,1,St Etienne,1
+26.02.2016,Nice,0,Bastia,2
+27.02.2016,Guingamp,2,Angers,2
+27.02.2016,Montpellier,3,Lille,0
+27.02.2016,Reims,4,Bordeaux,1
+27.02.2016,Toulouse,1,Rennes,2
+27.02.2016,Troyes,0,Lorient,1
+28.02.2016,Lyon,2,Paris SG,1
+28.02.2016,Nantes,0,Monaco,0
+28.02.2016,St Etienne,1,Caen,2
+04.03.2016,Caen,2,Monaco,2
+05.03.2016,Angers,0,St Etienne,0
+05.03.2016,Bastia,0,Lorient,0
+05.03.2016,Bordeaux,1,Ajaccio GFCO,1
+05.03.2016,Lille,2,Reims,0
+05.03.2016,Nice,2,Troyes,1
+05.03.2016,Paris SG,0,Montpellier,0
+06.03.2016,Lyon,5,Guingamp,1
+06.03.2016,Marseille,1,Toulouse,1
+06.03.2016,Rennes,4,Nantes,1
+09.03.2016,Ajaccio GFCO,1,Marseille,1
+09.03.2016,Bastia,0,Nantes,0
+11.03.2016,Monaco,2,Reims,2
+12.03.2016,Ajaccio GFCO,1,Caen,0
+12.03.2016,Bastia,1,Lille,2
+12.03.2016,Guingamp,2,St Etienne,0
+12.03.2016,Lorient,1,Marseille,1
+12.03.2016,Montpellier,0,Nice,2
+12.03.2016,Toulouse,4,Bordeaux,0
+13.03.2016,Nantes,2,Angers,0
+13.03.2016,Rennes,2,Lyon,2
+13.03.2016,Troyes,0,Paris SG,9
+18.03.2016,Marseille,2,Rennes,5
+19.03.2016,Angers,5,Lorient,1
+19.03.2016,Caen,2,Troyes,1
+19.03.2016,Lille,1,Toulouse,0
+19.03.2016,Lyon,2,Nantes,0
+19.03.2016,Reims,0,Guingamp,1
+19.03.2016,St Etienne,3,Montpellier,0
+20.03.2016,Bordeaux,1,Bastia,1
+20.03.2016,Nice,3,Ajaccio GFCO,0
+20.03.2016,Paris SG,0,Monaco,2
+01.04.2016,Monaco,1,Bordeaux,2
+02.04.2016,Ajaccio GFCO,0,St Etienne,2
+02.04.2016,Guingamp,2,Montpellier,2
+02.04.2016,Paris SG,4,Nice,1
+02.04.2016,Rennes,3,Reims,1
+02.04.2016,Toulouse,2,Caen,0
+02.04.2016,Troyes,0,Angers,1
+03.04.2016,Bastia,2,Marseille,1
+03.04.2016,Lorient,1,Lyon,3
+03.04.2016,Nantes,0,Lille,3
+08.04.2016,Montpellier,0,Lyon,2
+09.04.2016,Angers,0,Ajaccio GFCO,0
+09.04.2016,Caen,1,Lorient,2
+09.04.2016,Guingamp,0,Paris SG,2
+09.04.2016,Reims,2,Nantes,1
+09.04.2016,St Etienne,1,Troyes,0
+09.04.2016,Toulouse,4,Bastia,0
+10.04.2016,Lille,4,Monaco,1
+10.04.2016,Marseille,0,Bordeaux,0
+10.04.2016,Nice,3,Rennes,0
+15.04.2016,Lyon,1,Nice,1
+16.04.2016,Ajaccio GFCO,2,Lille,4
+16.04.2016,Bastia,0,St Etienne,1
+16.04.2016,Bordeaux,1,Angers,3
+16.04.2016,Lorient,1,Toulouse,1
+16.04.2016,Paris SG,6,Caen,0
+16.04.2016,Troyes,2,Reims,1
+17.04.2016,Monaco,2,Marseille,1
+17.04.2016,Nantes,0,Montpellier,2
+17.04.2016,Rennes,0,Guingamp,3
+22.04.2016,Nice,2,Reims,0
+23.04.2016,Toulouse,2,Lyon,3
+24.04.2016,Ajaccio GFCO,3,Bastia,2
+24.04.2016,Guingamp,1,Caen,1
+24.04.2016,Marseille,1,Nantes,1
+24.04.2016,Montpellier,4,Troyes,1
+24.04.2016,Rennes,1,Monaco,1
+24.04.2016,St Etienne,2,Lorient,0
+27.04.2016,Lille,0,Angers,0
+29.04.2016,Paris SG,4,Rennes,0
+30.04.2016,Caen,0,Bastia,0
+30.04.2016,Lorient,0,Lille,1
+30.04.2016,Lyon,2,Ajaccio GFCO,1
+30.04.2016,Monaco,3,Guingamp,2
+30.04.2016,Nantes,1,Nice,0
+30.04.2016,Reims,2,Montpellier,3
+30.04.2016,St Etienne,0,Toulouse,0
+30.04.2016,Troyes,2,Bordeaux,4
+01.05.2016,Angers,0,Marseille,1
+07.05.2016,Ajaccio GFCO,0,Paris SG,4
+07.05.2016,Bastia,1,Angers,0
+07.05.2016,Bordeaux,3,Lorient,0
+07.05.2016,Lille,0,Guingamp,0
+07.05.2016,Lyon,6,Monaco,1
+07.05.2016,Marseille,1,Reims,0
+07.05.2016,Montpellier,2,Rennes,0
+07.05.2016,Nantes,1,Caen,2
+07.05.2016,Nice,2,St Etienne,0
+07.05.2016,Toulouse,1,Troyes,0
+11.05.2016,Bordeaux,1,Paris SG,1
+14.05.2016,Angers,2,Toulouse,3
+14.05.2016,Caen,1,Bordeaux,0
+14.05.2016,Guingamp,2,Nice,3
+14.05.2016,Lorient,1,Ajaccio GFCO,0
+14.05.2016,Monaco,2,Montpellier,0
+14.05.2016,Paris SG,4,Nantes,0
+14.05.2016,Reims,4,Lyon,1
+14.05.2016,Rennes,1,Bastia,2
+14.05.2016,St Etienne,0,Lille,1
+14.05.2016,Troyes,1,Marseille,1

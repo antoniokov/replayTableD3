@@ -1,0 +1,241 @@
+﻿Date,HomeTeam,FTHG,AwayTeam,FTAG
+24.07.2015,St Truiden,2,Club Brugge,1
+25.07.2015,Genk,3,Oud-Heverlee Leuven,1
+25.07.2015,Kortrijk,2,Standard,1
+25.07.2015,Oostende,3,Mechelen,1
+25.07.2015,Waregem,3,Lokeren,1
+26.07.2015,Anderlecht,3,Waasland-Beveren,2
+26.07.2015,Charleroi,2,Mouscron-Peruwelz,1
+26.07.2015,Westerlo,1,Gent,1
+31.07.2015,Gent,1,Genk,0
+01.08.2015,Club Brugge,3,Mechelen,0
+01.08.2015,Mouscron-Peruwelz,0,St Truiden,2
+01.08.2015,Oostende,2,Westerlo,1
+01.08.2015,Waasland-Beveren,2,Kortrijk,1
+02.08.2015,Lokeren,2,Charleroi,2
+02.08.2015,Oud-Heverlee Leuven,0,Anderlecht,2
+02.08.2015,Standard,2,Waregem,1
+07.08.2015,Waregem,0,Genk,0
+08.08.2015,Kortrijk,0,Lokeren,0
+08.08.2015,Mechelen,3,Mouscron-Peruwelz,1
+08.08.2015,St Truiden,1,Oostende,1
+08.08.2015,Westerlo,3,Oud-Heverlee Leuven,2
+09.08.2015,Anderlecht,1,Gent,1
+09.08.2015,Charleroi,0,Club Brugge,0
+09.08.2015,Standard,1,Waasland-Beveren,0
+14.08.2015,Club Brugge,2,Kortrijk,1
+15.08.2015,Genk,2,Westerlo,1
+15.08.2015,Lokeren,2,Mechelen,0
+15.08.2015,Mouscron-Peruwelz,1,Standard,1
+15.08.2015,Waasland-Beveren,2,Waregem,1
+16.08.2015,Gent,1,St Truiden,0
+16.08.2015,Oostende,3,Anderlecht,1
+16.08.2015,Oud-Heverlee Leuven,2,Charleroi,0
+21.08.2015,St Truiden,3,Genk,1
+22.08.2015,Charleroi,0,Westerlo,0
+22.08.2015,Mechelen,2,Oud-Heverlee Leuven,1
+22.08.2015,Waasland-Beveren,3,Mouscron-Peruwelz,3
+22.08.2015,Waregem,2,Club Brugge,0
+23.08.2015,Anderlecht,1,Lokeren,0
+23.08.2015,Kortrijk,0,Gent,0
+23.08.2015,Standard,1,Oostende,2
+28.08.2015,Genk,2,Charleroi,0
+29.08.2015,Gent,2,Mechelen,2
+29.08.2015,Mouscron-Peruwelz,0,Kortrijk,1
+29.08.2015,Oostende,0,Waregem,2
+29.08.2015,Oud-Heverlee Leuven,1,St Truiden,0
+30.08.2015,Club Brugge,7,Standard,1
+30.08.2015,Lokeren,1,Waasland-Beveren,2
+30.08.2015,Westerlo,0,Anderlecht,3
+11.09.2015,Mouscron-Peruwelz,2,Club Brugge,1
+12.09.2015,Kortrijk,0,Oud-Heverlee Leuven,0
+12.09.2015,Mechelen,2,Westerlo,2
+12.09.2015,Waasland-Beveren,1,Oostende,5
+12.09.2015,Waregem,1,Gent,1
+13.09.2015,Anderlecht,0,Genk,0
+13.09.2015,St Truiden,1,Charleroi,1
+13.09.2015,Standard,0,Lokeren,1
+18.09.2015,Genk,3,Mechelen,1
+19.09.2015,Lokeren,1,Mouscron-Peruwelz,2
+19.09.2015,Oostende,1,Kortrijk,0
+19.09.2015,Oud-Heverlee Leuven,2,Waregem,3
+19.09.2015,Westerlo,0,St Truiden,3
+20.09.2015,Charleroi,1,Anderlecht,1
+20.09.2015,Club Brugge,5,Waasland-Beveren,1
+20.09.2015,Gent,4,Standard,1
+25.09.2015,Waregem,4,Westerlo,2
+26.09.2015,Mechelen,0,Charleroi,1
+26.09.2015,Mouscron-Peruwelz,2,Oostende,2
+26.09.2015,Standard,2,Oud-Heverlee Leuven,2
+26.09.2015,Waasland-Beveren,1,Gent,3
+27.09.2015,Anderlecht,1,St Truiden,0
+27.09.2015,Kortrijk,1,Genk,0
+27.09.2015,Lokeren,0,Club Brugge,1
+02.10.2015,Oostende,2,Lokeren,0
+03.10.2015,Charleroi,3,Waregem,0
+03.10.2015,Oud-Heverlee Leuven,1,Mouscron-Peruwelz,1
+03.10.2015,St Truiden,1,Waasland-Beveren,3
+03.10.2015,Westerlo,1,Kortrijk,1
+04.10.2015,Anderlecht,1,Mechelen,1
+04.10.2015,Genk,3,Standard,1
+04.10.2015,Gent,4,Club Brugge,1
+16.10.2015,Mouscron-Peruwelz,1,Gent,2
+17.10.2015,Lokeren,1,Oud-Heverlee Leuven,2
+17.10.2015,Mechelen,3,St Truiden,0
+17.10.2015,Standard,1,Westerlo,2
+17.10.2015,Waasland-Beveren,0,Genk,1
+18.10.2015,Club Brugge,1,Oostende,0
+18.10.2015,Kortrijk,2,Charleroi,0
+18.10.2015,Waregem,0,Anderlecht,4
+23.10.2015,Genk,0,Mouscron-Peruwelz,4
+24.10.2015,Gent,2,Oostende,2
+24.10.2015,Mechelen,3,Waregem,4
+24.10.2015,Oud-Heverlee Leuven,0,Waasland-Beveren,2
+24.10.2015,Westerlo,1,Lokeren,2
+25.10.2015,Anderlecht,3,Club Brugge,1
+25.10.2015,Charleroi,2,Standard,3
+25.10.2015,St Truiden,2,Kortrijk,1
+27.10.2015,Lokeren,1,Gent,2
+27.10.2015,Mouscron-Peruwelz,2,Westerlo,2
+27.10.2015,Oostende,3,Genk,2
+28.10.2015,Club Brugge,2,Oud-Heverlee Leuven,0
+28.10.2015,Standard,2,Mechelen,1
+28.10.2015,Waasland-Beveren,0,Charleroi,1
+28.10.2015,Waregem,4,St Truiden,0
+29.10.2015,Kortrijk,1,Anderlecht,1
+30.10.2015,Genk,0,Lokeren,2
+31.10.2015,Charleroi,1,Oostende,1
+31.10.2015,Mechelen,2,Waasland-Beveren,0
+31.10.2015,Oud-Heverlee Leuven,0,Gent,2
+31.10.2015,Westerlo,0,Club Brugge,2
+01.11.2015,Anderlecht,2,Mouscron-Peruwelz,0
+01.11.2015,St Truiden,1,Standard,0
+01.11.2015,Waregem,2,Kortrijk,2
+06.11.2015,Mouscron-Peruwelz,2,Waregem,2
+07.11.2015,Kortrijk,1,Mechelen,0
+07.11.2015,Lokeren,1,St Truiden,1
+07.11.2015,Oostende,3,Oud-Heverlee Leuven,0
+07.11.2015,Waasland-Beveren,2,Westerlo,2
+08.11.2015,Club Brugge,1,Genk,0
+08.11.2015,Gent,1,Charleroi,3
+08.11.2015,Standard,1,Anderlecht,0
+20.11.2015,Gent,5,Westerlo,0
+21.11.2015,Club Brugge,3,Waregem,0
+21.11.2015,Oud-Heverlee Leuven,1,Genk,3
+21.11.2015,Waasland-Beveren,2,St Truiden,1
+22.11.2015,Mechelen,2,Oostende,1
+22.11.2015,Standard,1,Kortrijk,1
+27.11.2015,Waregem,2,Standard,3
+28.11.2015,Charleroi,1,Lokeren,2
+28.11.2015,Genk,0,Gent,1
+28.11.2015,Kortrijk,3,Waasland-Beveren,1
+28.11.2015,St Truiden,0,Mouscron-Peruwelz,1
+29.11.2015,Anderlecht,3,Oud-Heverlee Leuven,2
+29.11.2015,Mechelen,1,Club Brugge,4
+29.11.2015,Westerlo,0,Oostende,1
+04.12.2015,Gent,2,Waregem,2
+05.12.2015,Mouscron-Peruwelz,2,Mechelen,3
+05.12.2015,Oostende,1,St Truiden,2
+05.12.2015,Oud-Heverlee Leuven,5,Westerlo,1
+05.12.2015,Waasland-Beveren,0,Standard,0
+06.12.2015,Club Brugge,2,Charleroi,1
+06.12.2015,Genk,0,Anderlecht,0
+06.12.2015,Lokeren,3,Kortrijk,1
+11.12.2015,Westerlo,0,Genk,0
+12.12.2015,Charleroi,2,Oud-Heverlee Leuven,1
+12.12.2015,Kortrijk,1,Mouscron-Peruwelz,3
+12.12.2015,Mechelen,1,Lokeren,1
+12.12.2015,Waregem,2,Waasland-Beveren,1
+13.12.2015,Anderlecht,1,Oostende,1
+13.12.2015,St Truiden,0,Gent,2
+13.12.2015,Standard,2,Club Brugge,0
+18.12.2015,Lokeren,1,Waregem,1
+19.12.2015,Genk,3,St Truiden,0
+19.12.2015,Mouscron-Peruwelz,0,Waasland-Beveren,1
+19.12.2015,Oud-Heverlee Leuven,3,Mechelen,1
+19.12.2015,Westerlo,2,Charleroi,1
+20.12.2015,Club Brugge,1,Anderlecht,4
+20.12.2015,Gent,3,Kortrijk,0
+20.12.2015,Oostende,4,Standard,1
+22.12.2015,Mouscron-Peruwelz,0,Charleroi,1
+23.12.2015,Lokeren,1,Anderlecht,1
+26.12.2015,Charleroi,1,Genk,0
+26.12.2015,Kortrijk,1,Club Brugge,4
+26.12.2015,Mechelen,2,Gent,0
+26.12.2015,St Truiden,2,Oud-Heverlee Leuven,2
+26.12.2015,Waasland-Beveren,2,Lokeren,3
+27.12.2015,Anderlecht,2,Westerlo,1
+27.12.2015,Standard,3,Mouscron-Peruwelz,0
+27.12.2015,Waregem,1,Oostende,0
+15.01.2016,Genk,2,Waregem,1
+16.01.2016,Charleroi,0,St Truiden,0
+16.01.2016,Club Brugge,3,Mouscron-Peruwelz,0
+16.01.2016,Oud-Heverlee Leuven,1,Kortrijk,0
+16.01.2016,Westerlo,3,Mechelen,2
+17.01.2016,Gent,2,Anderlecht,0
+17.01.2016,Lokeren,0,Standard,2
+17.01.2016,Oostende,3,Waasland-Beveren,3
+22.01.2016,Kortrijk,2,Oostende,1
+23.01.2016,Mechelen,1,Genk,1
+23.01.2016,Mouscron-Peruwelz,1,Lokeren,1
+23.01.2016,St Truiden,1,Westerlo,2
+23.01.2016,Waregem,2,Oud-Heverlee Leuven,2
+24.01.2016,Anderlecht,2,Charleroi,1
+24.01.2016,Standard,0,Gent,3
+24.01.2016,Waasland-Beveren,1,Club Brugge,2
+29.01.2016,St Truiden,1,Anderlecht,2
+30.01.2016,Charleroi,3,Mechelen,2
+30.01.2016,Genk,1,Kortrijk,0
+30.01.2016,Oud-Heverlee Leuven,0,Standard,2
+30.01.2016,Westerlo,1,Waregem,2
+31.01.2016,Club Brugge,2,Lokeren,1
+31.01.2016,Gent,2,Waasland-Beveren,1
+31.01.2016,Oostende,3,Mouscron-Peruwelz,3
+05.02.2016,Mechelen,2,Anderlecht,2
+06.02.2016,Kortrijk,1,Westerlo,1
+06.02.2016,Mouscron-Peruwelz,0,Genk,1
+06.02.2016,Waasland-Beveren,2,Oud-Heverlee Leuven,2
+06.02.2016,Waregem,2,Charleroi,3
+07.02.2016,Club Brugge,1,Gent,0
+07.02.2016,Lokeren,0,Oostende,1
+07.02.2016,Standard,1,St Truiden,2
+12.02.2016,Gent,2,Mouscron-Peruwelz,0
+13.02.2016,Anderlecht,3,Waregem,0
+13.02.2016,Charleroi,1,Kortrijk,1
+13.02.2016,Genk,6,Waasland-Beveren,1
+13.02.2016,Oud-Heverlee Leuven,3,Lokeren,3
+14.02.2016,Oostende,0,Club Brugge,2
+14.02.2016,St Truiden,0,Mechelen,3
+14.02.2016,Westerlo,2,Standard,0
+19.02.2016,Club Brugge,6,Westerlo,0
+20.02.2016,Kortrijk,3,St Truiden,0
+20.02.2016,Lokeren,0,Genk,0
+20.02.2016,Mouscron-Peruwelz,3,Oud-Heverlee Leuven,1
+20.02.2016,Standard,3,Charleroi,0
+21.02.2016,Oostende,5,Gent,2
+21.02.2016,Waasland-Beveren,1,Anderlecht,0
+21.02.2016,Waregem,2,Mechelen,3
+26.02.2016,Gent,3,Lokeren,1
+27.02.2016,Mechelen,0,Kortrijk,2
+27.02.2016,Oud-Heverlee Leuven,4,Oostende,1
+27.02.2016,St Truiden,1,Waregem,2
+27.02.2016,Westerlo,2,Mouscron-Peruwelz,2
+28.02.2016,Anderlecht,3,Standard,3
+28.02.2016,Charleroi,2,Waasland-Beveren,3
+28.02.2016,Genk,3,Club Brugge,2
+04.03.2016,Gent,1,Oud-Heverlee Leuven,1
+05.03.2016,Club Brugge,3,St Truiden,0
+05.03.2016,Kortrijk,1,Waregem,0
+05.03.2016,Lokeren,2,Westerlo,1
+05.03.2016,Mouscron-Peruwelz,2,Anderlecht,1
+05.03.2016,Oostende,2,Charleroi,1
+05.03.2016,Standard,2,Genk,1
+05.03.2016,Waasland-Beveren,0,Mechelen,0
+13.03.2016,Anderlecht,3,Kortrijk,0
+13.03.2016,Charleroi,1,Gent,1
+13.03.2016,Genk,4,Oostende,1
+13.03.2016,Mechelen,4,Standard,0
+13.03.2016,Oud-Heverlee Leuven,0,Club Brugge,1
+13.03.2016,St Truiden,1,Lokeren,1
+13.03.2016,Waregem,3,Mouscron-Peruwelz,0
+13.03.2016,Westerlo,1,Waasland-Beveren,0
