@@ -6,6 +6,12 @@ import getSparkColor from '../helpers/sparklines/get-spark-color';
 import getSparkClasses from '../helpers/sparklines/get-spark-classes';
 
 
+const columns = {
+    left: ['position', 'item'],
+    right: ['score', 'opponent', 'points.change', 'equal', 'points', 'pointsLabel'],
+    drilldown: ['score', 'opponent', 'wins', 'draws', 'losses', 'labeledPoints']
+};
+
 export default class extends Skeleton {
     constructor (data, params) {
         super(data, params);
@@ -101,9 +107,10 @@ export default class extends Skeleton {
 
         this.dispatch.on('roundPreview.sparks', roundMeta => {
             this.sparks.cells
-                .attr('class', cell => getSparkClasses(cell, roundMeta.index))
                 .style('background-color', cell => getSparkColor(cell, roundMeta.index, this.params))
-                .style('opacity', cell => cell.roundMeta.index > roundMeta.index ? 0.3 : 1);
+                .style('opacity', cell => cell.roundMeta.index > roundMeta.index ? 0.3 : 1)
+                .classed('current', cell => cell.roundMeta.index === roundMeta.index)
+                .classed('overlapped', cell => cell.roundMeta.index > roundMeta.index);
 
             this.sparks.roundIndex = roundMeta.index;
         });
@@ -144,9 +151,8 @@ export default class extends Skeleton {
         this.right = {};
         this.slider = {};
 
-        this.left.columns = ['position', 'item'];
-        this.right.columns = ['score', 'opponent', 'points.change', 'equal', 'points', 'pointsLabel'];
-        this.right.drilldownColumns = ['score', 'opponent', 'wins', 'draws', 'losses', 'labeledPoints'];
+        this.left.columns = columns.left;
+        this.right.columns = columns.right;
 
         [this.left.table, this.left.rows, this.left.cells] = this.makeTable(data, [...classes, 'left'], this.left.columns);
         [this.sparks.table, this.sparks.rows, this.sparks.cells] = this.makeSparks(data);
@@ -198,10 +204,6 @@ export default class extends Skeleton {
             return Promise.resolve();
         }
 
-        if (this.drilldown.item) {
-            this.endDrillDown();
-        }
-
         const change = roundIndex - this.currentRound;
         this.dispatch.call('roundChange', this, this.data.results[roundIndex].meta);
 
@@ -217,7 +219,6 @@ export default class extends Skeleton {
             .attr('class', cell => cell.classes.join(' '))
             .style('color', cell => cell.color)
             .text(cell => cell.text);
-
 
 
         const preAnimations = ['right', 'slider', 'sparks']
@@ -264,7 +265,8 @@ export default class extends Skeleton {
 
     moveSparks (roundIndex, duration = 0) {
         this.sparks.cells
-            .attr('class', cell => getSparkClasses(cell, roundIndex))
+            .classed('current', cell => cell.roundMeta.index === roundIndex)
+            .classed('overlapped', cell => cell.roundMeta.index > roundIndex)
             .transition()
             .duration(duration)
             .style('background-color', cell => getSparkColor(cell, roundIndex, this.params))
@@ -295,12 +297,8 @@ export default class extends Skeleton {
             this[side].rows
                 .data(this.data.results[roundIndex].results, k => k.item);
 
-            const columns = !this.drilldown.item
-                ? this[side].columns
-                : side === 'right' ? this.right.drilldownColumns : this.left.columns;
-
             this[side].cells = this[side].cells
-                .data(result => columns.map(column => new Cell(column, result, this.params)))
+                .data(result => this[side].columns.map(column => new Cell(column, result, this.params)))
                 .attr('class', cell => cell.classes.join(' '))
                 .style('color', cell => cell.color)
                 .text(cell => cell.text);
@@ -319,8 +317,10 @@ export default class extends Skeleton {
                 .text(this.params.allLabel);
         }
 
+        this.right.columns = columns.drilldown;
+
         this.right.cells
-            .data(result => this.right.drilldownColumns.map(column => new Cell(column, result, this.params)))
+            .data(result => this.right.columns.map(column => new Cell(column, result, this.params)))
             .attr('class', cell => cell.classes.join(' '))
             .style('color', cell => cell.color)
             .text(cell => cell.text);
@@ -344,6 +344,8 @@ export default class extends Skeleton {
 
         this.sparks.cells.selectAll('.spark-score')
             .classed('muted', true);
+
+        this.right.columns = columns.right;
 
         this.right.cells
             .data(result => this.right.columns.map(column => new Cell(column, result, this.params)))
