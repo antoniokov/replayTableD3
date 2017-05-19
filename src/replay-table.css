@@ -276,8 +276,7 @@ h1 {
 }
 .drilldown-contorls .item{
 	display: inline-block;
-	vertical-align: middle;
-
+	vertical-align: bottom;
 	font-size: 14px;
 	text-transform: uppercase;
 	font-weight: 800;
@@ -328,6 +327,11 @@ h1 {
 	font-size: 14px;
 	min-height: 23px;
 }
+.replayTable td.outcome{
+	width: 5px;
+	padding: 0;
+	min-height: 23px;
+}
 .replayTable .clickable{
 	cursor: pointer;
 }
@@ -357,7 +361,7 @@ h1 {
 	position: relative;
 }
 .replayTable .table-container.sparklines > table.sparks{
-	top: -5px;
+	top: -7px;
 }
 .replayTable .table-container.sparklines > table td{
 	border-bottom: 2px solid #fff;
@@ -379,6 +383,9 @@ h1 {
 	background: #000;
 	left: 0;
 }
+.replayTable td.spark.muted .spark-position{
+	opacity: 0.4;
+}
 
 .replayTable td.change {
 	color: rgba(0,0,0,0.8);
@@ -396,6 +403,23 @@ h1 {
 	background-color: transparent!important;
 }
 
+.replayTable td.spark.overlapped {
+	-webkit-filter: grayscale(100%);
+	-moz-filter: grayscale(100%);
+	-ms-filter: grayscale(100%);
+	-o-filter: grayscale(100%);
+	filter: grayscale(100%);
+	filter: gray; /* IE 6-9 */
+}
+
+
+.replayTable span.spark-score{
+	position: absolute;
+	left: 7px;
+	top: 0;
+	line-height: 23px;
+}
+.replayTable td.spark.muted{}
 .replayTable span.spark-score.muted {
 	visibility: hidden;
 }
@@ -409,11 +433,20 @@ h1 {
 }
 
 .replayTable  .main.right{
-	top: 6px;
-
 	z-index: 2;
-	background: rgba(255,255,255,0.95);
+	background: rgba(255,255,255,0.3);
 }
+
+.controls-container.sparklines .drilldown-control{
+	display: inline-block;
+	vertical-align: bottom;
+	margin-left: 10px;
+	line-height: 13px;
+	font-size: 14px;
+	text-transform: uppercase;
+	font-weight: 800;
+}
+
 
 
 
