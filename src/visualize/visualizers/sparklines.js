@@ -1,6 +1,7 @@
 import Skeleton from '../skeleton';
 import skeletonCell from '../cell';
 import numberToChange from '../../helpers/general/number-to-change';
+import isBetween from '../../helpers/general/is-between';
 import getItemResults from '../../helpers/data/get-item-results';
 import getSparkColor from '../helpers/sparklines/get-spark-color';
 import getSparkClasses from '../helpers/sparklines/get-spark-classes';
@@ -105,15 +106,7 @@ export default class extends Skeleton {
             .classed('overlapped', true);
 
 
-        this.dispatch.on('roundPreview.sparks', roundMeta => {
-            this.sparks.cells
-                .style('background-color', cell => getSparkColor(cell, roundMeta.index, this.params))
-                .style('opacity', cell => cell.roundMeta.index > roundMeta.index ? 0.3 : 1)
-                .classed('current', cell => cell.roundMeta.index === roundMeta.index)
-                .classed('overlapped', cell => cell.roundMeta.index > roundMeta.index);
-
-            this.sparks.roundIndex = roundMeta.index;
-        });
+        this.dispatch.on('roundPreview.sparks', roundMeta => this.moveSparks(roundMeta.index, 0));
 
         return [table, rows, cells];
     }
@@ -220,7 +213,6 @@ export default class extends Skeleton {
             .style('color', cell => cell.color)
             .text(cell => cell.text);
 
-
         const preAnimations = ['right', 'slider', 'sparks']
             .filter(element => this[element].roundIndex !== this.currentRound);
 
@@ -264,14 +256,23 @@ export default class extends Skeleton {
     }
 
     moveSparks (roundIndex, duration = 0) {
-        this.sparks.cells
-            .classed('current', cell => cell.roundMeta.index === roundIndex)
-            .classed('overlapped', cell => cell.roundMeta.index > roundIndex)
-            .transition()
-            .duration(duration)
-            .style('background-color', cell => getSparkColor(cell, roundIndex, this.params))
-            .style('opacity', cell => cell.roundMeta.index > roundIndex ? 0.3 : 1)
-            .on('end', () => this.sparks.roundIndex = roundIndex);
+        const changed = this.sparks.cells
+            .filter(cell => isBetween(cell.roundMeta.index, roundIndex, this.sparks.roundIndex));
+
+        if (!duration) {
+            changed
+                .style('background-color', cell => getSparkColor(cell, roundIndex, this.params))
+                .style('opacity', cell => cell.roundMeta.index > roundIndex ? 0.15 : 1);
+
+            this.sparks.roundIndex = roundIndex
+        } else {
+            changed
+                .transition()
+                .duration(duration)
+                .style('background-color', cell => getSparkColor(cell, roundIndex, this.params))
+                .style('opacity', cell => cell.roundMeta.index > roundIndex ? 0.15 : 1)
+                .on('end', () => this.sparks.roundIndex = roundIndex);
+        }
     }
 
     first () {

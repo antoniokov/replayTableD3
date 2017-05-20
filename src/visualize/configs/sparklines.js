@@ -14,7 +14,7 @@ export default {
     durations: {
         default: {
             move: 1000,
-            freeze: 750,
+            freeze: 500,
             pre: 750
         },
         parse: parseObject,
